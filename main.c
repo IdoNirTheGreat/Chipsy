@@ -1,5 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include "fonts.h"
 # define COLS 64
 # define ROWS 32
 # define KEYS 16
@@ -47,10 +48,15 @@ void load_ROM(struct Machine chip8, char const* filename)
 
     // Initialize program counter:
     chip8.pc = START_ADDRESS;
+
+    // Load fonts int machine memory:
+    for (unsigned int i = 0; i < FONTSET_SIZE; ++i)
+        chip8.memory[FONTSET_START_ADDRESS + i] = fontset[i];
 }
 
 int main()
 {
-    printf("Hello world!");
+    printf("Hello world!\n");
+    printf("%d", sizeof(unsigned char));
     return 0;
 }
