@@ -1,5 +1,5 @@
-#ifndef _INC_FONTS_H
-#define _INC_FONTS_H
+#ifndef INC_FONTS_H
+#define INC_FONTS_H
 
 extern const unsigned int FONTSET_SIZE;
 extern const unsigned int FONTSET_START_ADDRESS;
