@@ -6,7 +6,7 @@
 
 extern const unsigned int START_ADDRESS; /** Start address for CHIP8's ROM.*/;
 
-typedef struct CHIP8 /** The CHIP8 Struct which holds all VM's components.*/
+typedef struct CHIP8 /** The CHIP8 Struct which holds all VM's attributes.*/
 {
     unsigned char registers[16];
     unsigned char memory[4096];
