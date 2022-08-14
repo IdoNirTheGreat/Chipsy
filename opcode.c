@@ -179,27 +179,35 @@ void instruction(CHIP8 chip8, int instruction)
             break;
         }
 
-        // case OP_DXYN:
-        // {
-        //     // This is the most involved instruction. It will draw
-        //     // an N pixels tall sprite from the memory location that
-        //     // the I index register is holding to the screen, at the
-        //     // horizontal X coordinate in VX and the Y coordinate in VY.
-        //     // All the pixels that are “on” in the sprite will flip the
-        //     // pixels on the screen that it is drawn to. If any pixels 
-        //     // on the screen were turned “off” by this, the VF flag 
-        //     // register is set to 1. Otherwise, it’s set to 0.
+        case OP_DXYN:
+        {
+            // This is the most involved instruction. It will draw
+            // an N pixels tall sprite from the memory location that
+            // the I index register is holding to the screen, at the
+            // horizontal X coordinate in VX and the Y coordinate in VY.
+            // All the pixels that are “on” in the sprite will flip the
+            // pixels on the screen that it is drawn to. If any pixels 
+            // on the screen were turned “off” by this, the VF flag 
+            // register is set to 1. Otherwise, it’s set to 0.
 
-        //     // To complete!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            unsigned short Vx = (chip8.opcode & 0x0F00u) >> 8u;
+            unsigned short Vy = (chip8.opcode & 0x00F0u) >> 4u;
+            unsigned char X = chip8.registers[Vx] & 0x003F;
+            unsigned char Y = chip8.registers[Vx] & 0x001F;
+            chip8.registers[0x000F] = 0x0000;
+            unsigned char N = chip8.opcode & 0x000F;
+            unsigned char byte_n = chip8.monitor[chip8.index + N];
+            
+            for (int i = 0; i < ROWS; ++i)
+            {
+                for (int j = 0; j < COLS; ++j)
+                {
 
-        //     unsigned short Vx = (chip8.opcode & 0x0F00u) >> 8u;
-        //     unsigned char X = chip8.registers[Vx] & 0x003F;
-        //     unsigned char Y = chip8.registers[Vx] & 0x001F;
-        //     chip8.registers[0x000F] = 0x0000;
-        //     unsigned char N = chip8.opcode & 0x000F;
-        //     unsigned char byte_n = chip8.monitor[chip8.index + N];
-        //     break;
-        // }
+                }
+            }
+
+            break;
+        }
 
         default:
             break;
