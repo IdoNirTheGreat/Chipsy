@@ -27,4 +27,6 @@ void load_fonts(CHIP8 chip8); /** Loads fonts to chip8 VM.*/
 
 void init_chip8(CHIP8 chip8, char const* rom); /** Main function to init VM.*/
 
+void cycle(CHIP8 chip8); /** Operate one CPU cycle.*/
+
 #endif
