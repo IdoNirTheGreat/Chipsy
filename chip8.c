@@ -29,7 +29,7 @@ void load_ROM(CHIP8 chip8, char const* filename)
         // Free the buffer to save space:
         free(buffer);
     }
-
+    printf_s("ROM loaded successfully.\n");
 }
 
 void load_fonts(CHIP8 chip8)
@@ -37,6 +37,7 @@ void load_fonts(CHIP8 chip8)
     // Load fonts int machine memory:
     for (unsigned int i = 0; i < FONTSET_SIZE; ++i)
         chip8.memory[FONTSET_START_ADDRESS + i] = fontset[i];
+    printf_s("Fonts loaded successfully.\n");
 }
 
 void init_chip8(CHIP8 chip8, char const* rom)
