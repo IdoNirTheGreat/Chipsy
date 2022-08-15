@@ -1,24 +1,46 @@
 # include <stdlib.h>
+# include <stdio.h>
 # include <string.h>
 # include "opcode.h"
 # include "randGen.h"
-# define OP_00E0 1
-# define OP_1NNN 2
-# define OP_6XNN 3
-# define OP_8XY0 4
-# define OP_8XY1 5
-# define OP_8XY2 6
-# define OP_8XY3 7
-# define OP_8XY4 8
-# define OP_7XNN 9
-# define OP_ANNN 10
-# define OP_DXYN 11
-# define OP_8XY5 12
-# define OP_8XY7 13
-# define OP_8XY6 14
-# define OP_8XYE 15
-# define OP_BNNN 16
-# define OP_CXNN 17
+
+enum OPCODE
+{
+    OP_00E0,
+    OP_1NNN,
+    OP_6XNN,
+    OP_8XY0,
+    OP_8XY1,
+    OP_8XY2,
+    OP_8XY3,
+    OP_8XY4,
+    OP_7XNN,
+    OP_ANNN,
+    OP_DXYN,
+    OP_8XY5,
+    OP_8XY7,
+    OP_8XY6,
+    OP_8XYE,
+    OP_BNNN,
+    OP_CXNN,
+};
+
+void det_opcode(CHIP8 chip8)
+{
+    unsigned char frst_bt = chip8.opcode & 0xF000u;
+    switch (frst_bt)
+    {
+        case 0:
+        {
+            instruction(chip8, OP_00E0);
+        }
+
+        default:
+        {
+            break;
+        }
+    } 
+}
 
 void instruction(CHIP8 chip8, int instruction)
 {
@@ -26,6 +48,7 @@ void instruction(CHIP8 chip8, int instruction)
     {
         case OP_00E0:
         {
+            printf_s("Clearing screen...\n");
             memset(chip8.monitor, 0, sizeof(chip8.monitor));
             break;
         }
