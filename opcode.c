@@ -196,15 +196,26 @@ void instruction(CHIP8 chip8, int instruction)
             unsigned char Y = chip8.registers[Vx] & 0x001F;
             chip8.registers[0x000F] = 0x0000;
             unsigned char N = chip8.opcode & 0x000F;
-            unsigned char byte_n = chip8.monitor[chip8.index + N];
             
-            for (int i = 0; i < ROWS; ++i)
+            for (unsigned int i = 0; i < N; ++i)
             {
-                for (int j = 0; j < COLS; ++j)
-                {
+                unsigned char sprite_byte = chip8.memory[chip8.index + i];
 
+                for (unsigned int j = 0; j < 8; ++j)
+                {
+                    unsigned char sprite_pixel = sprite_byte & (0x80 >> j);
+                    unsigned long* actual_pixel = &chip8.monitor[(Y + i) * COLS + (X + j)];
+
+                    if (sprite_pixel)
+                    {
+                        if (*actual_pixel == 0xFFFFFFFF)
+                            chip8.registers[0x000F] = 1;
+                        
+                        *actual_pixel ^= 0xFFFFFFFF;
+                    }
                 }
             }
+
 
             break;
         }
