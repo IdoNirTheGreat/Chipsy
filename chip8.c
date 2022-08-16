@@ -21,7 +21,7 @@ void load_ROM(CHIP8 chip8, char const* filename)
 
         // Reset file pointer, fill the buffer, close file:
         fseek(fp, 0, SEEK_SET); 
-        fread(buffer, sizeof(fp_len), 1, fp); 
+        fread(buffer, sizeof(fp_len), fp_len, fp); 
         fclose(fp);
         printf_s("File size is %d bits.\n", fp_len);
         
@@ -67,4 +67,5 @@ void cycle(CHIP8 chip8)
     chip8.opcode = (chip8.memory[chip8.pc] << 8) + chip8.memory[chip8.pc + 1];
     printf_s("%x\n", chip8.opcode);
     det_opcode(chip8);
+    chip8.opcode += 2;
 }
