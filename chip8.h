@@ -21,12 +21,12 @@ typedef struct CHIP8 /** The CHIP8 Struct which holds all VM's attributes.*/
     unsigned long opcode;
 } CHIP8; 
 
-void load_ROM(CHIP8 chip8, char const* filename); /** Loads ROM data from filename to chip8 VM.*/
+void load_ROM(CHIP8* chip8, char const* filename); /** Loads ROM data from filename to chip8 VM.*/
 
-void load_fonts(CHIP8 chip8); /** Loads fonts to chip8 VM.*/
+void load_fonts(CHIP8* chip8); /** Loads fonts to chip8 VM.*/
 
-void init_chip8(CHIP8 chip8, char const* rom); /** Main function to init VM.*/
+void init_chip8(CHIP8* chip8, char const* rom); /** Main function to init VM.*/
 
-void cycle(CHIP8 chip8); /** Operate one CPU cycle.*/
+void cycle(CHIP8* chip8); /** Operate one CPU cycle.*/
 
 #endif
