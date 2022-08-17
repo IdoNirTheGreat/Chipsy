@@ -29,7 +29,7 @@ void load_ROM(CHIP8* chip8, char const* filename)
         for (int i = 0; i < fp_len * sizeof(unsigned char); ++i)
         {
             chip8->memory[START_ADDRESS + i] = buffer[i];
-            // printf_s("%d. %x, %x\n", i, chip8.memory[START_ADDRESS + i], buffer[i]);
+            // printf_s("%d. %x, %x\n", i, chip8->memory[START_ADDRESS + i], buffer[i]);
             // if (chip8.memory[START_ADDRESS + i] != buffer[i] && i < 10)
             // {
             //     printf_s("%x, %x %d\n", chip8.memory[START_ADDRESS + i], buffer[i], i);
@@ -65,10 +65,10 @@ void init_chip8(CHIP8* chip8, char const* rom)
 
 void cycle(CHIP8* chip8)
 {
-    printf_s("%4x %4x\n", chip8->memory[chip8->pc], chip8->memory[chip8->pc + 1]);
+    printf_s("Data in memory: %4x %4x\n", chip8->memory[chip8->pc], chip8->memory[chip8->pc + 1]);
     chip8->opcode = (chip8->memory[chip8->pc] << 8) + chip8->memory[chip8->pc + 1];
     printf_s("Current opcode: %04x\n", chip8->opcode);
-    det_opcode(chip8);
+    // det_opcode(chip8);
     chip8->pc += 2;
     printf_s("PC at %x\n", chip8->pc);
 }
