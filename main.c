@@ -38,16 +38,15 @@ int WinMain(int argc, char* args[])
     
     CHIP8 chipsy = {};
     init_chip8(&chipsy, FILENAME);
-    for (int i = 0; i < 8; ++i)
+    for (int i = 0; i < 50; ++i)
     {
         printf_s("Cycle %d: \n", i+1);
-        printf_s("Data in memory (main): %4x %4x\n", chipsy.memory[chipsy.pc], chipsy.memory[chipsy.pc + 1]);
         cycle(&chipsy);
         printf_s("\n");
     }
 
     screenSurface = SDL_GetWindowSurface(window);
-    SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0, 0, 0));
+    SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0, 255, 0));
     SDL_UpdateWindowSurface(window);
     SDL_Delay(2000);
     SDL_DestroyWindow(window);

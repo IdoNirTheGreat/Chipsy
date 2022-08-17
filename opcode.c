@@ -3,55 +3,6 @@
 # include <string.h>
 # include "opcode.h"
 # include "randGen.h"
-// // for initializing and shutdown functions
-// # include <SDL2/SDL.h>
- 
-// // for rendering images and graphics on screen
-// # include <SDL2/SDL_image.h>
-
-enum OPCODE
-{
-    OP_00E0,
-    OP_00EE,
-    OP_0NNN,
-    OP_1NNN,
-    OP_2NNN,
-    OP_3XNN,
-    OP_4XNN,
-    OP_5XY0,
-    OP_6XNN,
-    OP_7XNN,
-    OP_8XY0,
-    OP_8XY1,
-    OP_8XY2,
-    OP_8XY3,
-    OP_8XY4,
-    OP_8XY5,
-    OP_8XY6,
-    OP_8XY7,
-    OP_8XYE,
-    OP_9XY0,
-    OP_ANNN,
-    OP_BNNN,
-    OP_CXNN,
-    OP_DXYN,
-    OP_EX9E,
-    OP_EXA1,
-    OP_FX07,
-    OP_FX0A,
-    OP_FX15,
-    OP_FX18,
-    OP_FX1E,
-    OP_FX29,
-    OP_FX33,
-    OP_FX55,
-    OP_FX65,
-};
-
-enum ERROR
-{
-    DET_OPCODE_ERROR,
-};
 
 void det_opcode(CHIP8* chip8)
 {
@@ -63,7 +14,7 @@ void det_opcode(CHIP8* chip8)
         {
             switch (chip8->opcode)
             {
-                case 0x00E0u:
+                case 0x00e0u:
                 {
                     instruction(chip8, OP_00E0);
                     break;
@@ -188,6 +139,7 @@ void det_opcode(CHIP8* chip8)
                 default:
                 {
                     printf_s("Opcode determination function has failed!\n");
+                    exit(DET_OPCODE_ERROR);
                     break;
                 }
             }
@@ -370,6 +322,7 @@ void instruction(CHIP8* chip8, int instruction)
     {
         case OP_00E0:
         {
+            printf_s("Initiating OP_00E0\n");
             printf_s("Clearing screen...\n");
             memset(chip8->monitor, 0, sizeof(chip8->monitor[0]));
             break;
@@ -380,6 +333,7 @@ void instruction(CHIP8* chip8, int instruction)
             //This instruction should simply set PC to NNN, 
             // causing the program to jump to that memory location.
             // Do not increment the PC afterwards, it jumps directly there.
+            printf_s("Initiating OP_1NNN\n");
             unsigned short addr = chip8->opcode & 0x0FFFu;
             chip8->pc = addr;
             break;
@@ -388,6 +342,7 @@ void instruction(CHIP8* chip8, int instruction)
         case OP_6XNN:
         {
             // Simply set the register Vx to the value NN.
+            printf_s("Initiating OP_6XNN\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short NN = chip8->opcode & 0x00FFu;
             chip8->registers[Vx] = NN;
@@ -397,6 +352,7 @@ void instruction(CHIP8* chip8, int instruction)
         case OP_8XY0:
         {
             // Vx is set to the value of Vy.
+            printf_s("Initiating OP_8XY0\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vy];
@@ -497,6 +453,7 @@ void instruction(CHIP8* chip8, int instruction)
         case OP_7XNN:
         {
             // Add the value NN to Vx (no flag).
+            printf_s("Initiating OP_7XNN\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short NN = (chip8->opcode & 0x00FFu);
             chip8->registers[Vx] = chip8->registers[Vx] + NN;
@@ -506,6 +463,7 @@ void instruction(CHIP8* chip8, int instruction)
         case OP_ANNN:
         {
             // Sets the index register to the value NNN.
+            printf_s("Initiating OP_ANNN\n");
             unsigned short NNN = (chip8->opcode & 0x0FFFu);
             chip8->index = NNN;
             break;
@@ -517,6 +475,7 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_CXNN:
         {
+            printf_s("Initiating OP_CXNN\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short NN = chip8->opcode & 0x00FFu;
             unsigned char random = rand_byte() & NN;
@@ -534,7 +493,7 @@ void instruction(CHIP8* chip8, int instruction)
             // pixels on the screen that it is drawn to. If any pixels 
             // on the screen were turned “off” by this, the VF flag 
             // register is set to 1. Otherwise, it’s set to 0.
-
+            printf_s("Initiating OP_DXYN\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             unsigned char X = chip8->registers[Vx] & 0x003F;

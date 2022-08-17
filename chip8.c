@@ -69,6 +69,14 @@ void cycle(CHIP8* chip8)
     chip8->opcode = (chip8->memory[chip8->pc] << 8) + chip8->memory[chip8->pc + 1];
     printf_s("Current opcode: %04x\n", chip8->opcode);
     // det_opcode(chip8);
+    if(chip8->opcode == 0x00e0u)
+    {
+        instruction(chip8, OP_00E0);
+    }
+    else
+    {
+        det_opcode(chip8);
+    }
     chip8->pc += 2;
     printf_s("PC at %x\n", chip8->pc);
 }
