@@ -12,40 +12,104 @@
 enum OPCODE
 {
     OP_00E0,
+    OP_00EE,
+    OP_0NNN,
     OP_1NNN,
+    OP_2NNN,
+    OP_3XNN,
+    OP_4XNN,
+    OP_5XY0,
     OP_6XNN,
+    OP_7XNN,
     OP_8XY0,
     OP_8XY1,
     OP_8XY2,
     OP_8XY3,
     OP_8XY4,
-    OP_7XNN,
-    OP_ANNN,
-    OP_DXYN,
     OP_8XY5,
-    OP_8XY7,
     OP_8XY6,
+    OP_8XY7,
     OP_8XYE,
+    OP_9XY0,
+    OP_ANNN,
     OP_BNNN,
     OP_CXNN,
+    OP_DXYN,
+    OP_EX9E,
+    OP_EXA1,
+    OP_FX07,
+    OP_FX0A,
+    OP_FX15,
+    OP_FX18,
+    OP_FX1E,
+    OP_FX29,
+    OP_FX33,
+    OP_FX55,
+    OP_FX65,
+};
+
+enum ERROR
+{
+    DET_OPCODE_ERROR,
 };
 
 void det_opcode(CHIP8* chip8)
 {
-    // This opcode determination function only works for the IBM test!
+    printf_s("Opcode in determination function: %x\n", chip8->opcode);
     unsigned char frst_bt = (chip8->opcode & 0xF000u) >> 12;
-    printf_s("First bit %x\n", frst_bt);
     switch (frst_bt)
     {
         case 0x0:
         {
-            instruction(chip8, OP_00E0);
-            break;
+            switch (chip8->opcode)
+            {
+                case 0x00E0u:
+                {
+                    instruction(chip8, OP_00E0);
+                    break;
+                }
+
+                case 0x00EEu:
+                {
+                    instruction(chip8, OP_00EE);
+                    break;
+                }
+                
+                default:
+                {
+                    instruction(chip8, OP_0NNN);
+                    break;
+                }
+            }
         }
 
         case 0x1:
         {
             instruction(chip8, OP_1NNN);
+            break;
+        }
+
+        case 0x2:
+        {
+            instruction(chip8, OP_2NNN);
+            break;
+        }
+
+        case 0x3:
+        {
+            instruction(chip8, OP_3XNN);
+            break;
+        }
+
+        case 0x4:
+        {
+            instruction(chip8, OP_4XNN);
+            break;
+        }
+
+        case 0x5:
+        {
+            instruction(chip8, OP_5XY0);
             break;
         }
 
@@ -61,9 +125,97 @@ void det_opcode(CHIP8* chip8)
             break;
         }
 
+        case 0x8:
+        {
+            unsigned char frth_bt = chip8->opcode & 0x000Fu;
+            switch (frth_bt)
+            {
+                case 0x0:
+                {
+                    instruction(chip8, OP_8XY0);
+                    break;
+                    
+                }
+
+                case 0x1:
+                {
+                    instruction(chip8, OP_8XY1);
+                    break;
+                }
+
+                case 0x2:
+                {
+                    instruction(chip8, OP_8XY2);
+                    break;
+                }
+
+                case 0x3:
+                {
+                    instruction(chip8, OP_8XY3);
+                    break;
+                }
+
+                case 0x4:
+                {
+                    instruction(chip8, OP_8XY4);
+                    break;
+                }
+
+                case 0x5:
+                {
+                    instruction(chip8, OP_8XY5);
+                    break;
+                }
+
+                case 0x6:
+                {
+                    instruction(chip8, OP_8XY6);
+                    break;
+                }
+
+                case 0x7:
+                {
+                    instruction(chip8, OP_8XY7);
+                    break;
+                }
+
+                case 0xE:
+                {
+                    instruction(chip8, OP_8XYE);
+                    break;
+                }
+                
+                default:
+                {
+                    printf_s("Opcode determination function has failed!\n");
+                    break;
+                }
+            }
+
+            break;
+        }
+
+        case 0x9:
+        {
+            instruction(chip8, OP_9XY0);
+            break;
+        }
+
         case 0xA:
         {
             instruction(chip8, OP_ANNN);
+            break;
+        }
+
+        case 0xB:
+        {
+            instruction(chip8, OP_BNNN);
+            break;
+        }
+
+        case 0xC:
+        {
+            instruction(chip8, OP_CXNN);
             break;
         }
 
@@ -73,9 +225,140 @@ void det_opcode(CHIP8* chip8)
             break;
         }
 
+        case 0xE:
+        {
+            unsigned char thrd_bt = (chip8->opcode & 0x000Fu) >> 4;
+            switch (thrd_bt)
+            {
+                case 0x9:
+                {
+                    instruction(chip8, OP_EX9E);
+                    break;
+                }
+
+                case 0xA:
+                {
+                    instruction(chip8, OP_EXA1);
+                    break;
+                }
+
+                default:
+                {
+                    printf_s("There seems to be an error with determining the opcode.\n");
+                    exit(DET_OPCODE_ERROR);
+                    break;
+                }
+            }
+
+            break;
+        }
+
+        case 0xF:
+        {
+            unsigned char thrd_bt = (chip8->opcode & 0x00F0u) >> 4;
+            switch (thrd_bt)
+            {
+                case 0x0:
+                {
+                    unsigned char frth_bt = chip8->opcode & 0x000Fu;
+                    switch (frth_bt)
+                    {
+                        case 0x7:
+                        {
+                            instruction(chip8, OP_FX07);
+                            break;
+                        }
+
+                        case 0xA:
+                        {
+                            instruction(chip8, OP_FX0A);
+                            break;
+                        }
+
+                        default:
+                        {
+                            printf_s("There seems to be an error with determining the opcode.\n");
+                            exit(DET_OPCODE_ERROR);
+                            break;
+                        }
+                    }
+                    
+                    break;
+                }
+
+                case 0x1:
+                {
+                    unsigned char frth_bt = chip8->opcode & 0x000Fu;
+                    switch (frth_bt)
+                    {
+                        case 0x5:
+                        {
+                            instruction(chip8, OP_FX15);
+                            break;
+                        }
+
+                        case 0x8:
+                        {
+                            instruction(chip8, OP_FX18);
+                            break;
+                        }
+
+                        case 0xE:
+                        {
+                            instruction(chip8, OP_FX1E);
+                            break;
+                        }
+
+                        default:
+                        {
+                            printf_s("There seems to be an error with determining the opcode.\n");
+                            exit(DET_OPCODE_ERROR);
+                            break;
+                        }
+
+                    }
+
+                    break;
+                }
+
+                case 0x2:
+                {
+                    instruction(chip8, OP_FX29);
+                    break;
+                }
+
+                case 0x3:
+                {
+                    instruction(chip8, OP_FX33);
+                    break;
+                }
+
+                case 0x5:
+                {
+                    instruction(chip8, OP_FX55);
+                    break;
+                }
+
+                case 0x6:
+                {
+                    instruction(chip8, OP_FX65);
+                    break;
+                }
+
+                default:
+                {
+                    printf_s("There seems to be an error with determining the opcode.\n");
+                    exit(DET_OPCODE_ERROR);
+                    break;
+                }
+            }
+        }
+
 
         default:
         {
+            printf_s("There seems to be an error with determining the opcode.\n");
+            exit(DET_OPCODE_ERROR);
             break;
         }
     }
