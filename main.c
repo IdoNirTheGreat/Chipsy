@@ -40,6 +40,7 @@ int WinMain(int argc, char* args[])
     init_chip8(&chipsy, FILENAME);
     for (int i = 0; i < 50; ++i)
     {
+        // printf_s("Value at 0x%x = 0x%x\n", START_ADDRESS+i, chipsy.memory[START_ADDRESS+i]);
         printf_s("Cycle %d: \n", i+1);
         cycle(&chipsy);
         printf_s("\n");

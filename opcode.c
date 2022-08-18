@@ -342,12 +342,17 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_1NNN:
         {
-            //This instruction should simply set PC to NNN, 
+            // This instruction should simply set PC to NNN, 
             // causing the program to jump to that memory location.
             // Do not increment the PC afterwards, it jumps directly there.
             printf_s("Initiating OP_1NNN\n");
-            unsigned short addr = chip8->opcode & 0x0FFFu;
-            chip8->pc = addr;
+            unsigned short NNN = chip8->opcode & 0x0FFFu;
+            printf_s("Should change PC (value=0x%x) to 0x%x; ", chip8->pc, NNN);
+            chip8->pc = NNN;
+            printf_s("PC updated value: 0x%x\n", chip8->pc);
+            printf_s("memory at 0x%x=0x%x, 0x%x=0x%x\n", chip8->pc, chip8->memory[chip8->pc], chip8->pc + 1, chip8->memory[chip8->pc + 1]);
+            unsigned long temp = (chip8->memory[chip8->pc] << 8) + chip8->memory[chip8->pc + 1];
+            printf_s("New opcode should be 0x%x\n", temp);
             break;
         }
 
