@@ -328,6 +328,18 @@ void instruction(CHIP8* chip8, int instruction)
             break;
         }
 
+        case OP_00EE:
+        {
+            printf_s("Initiating OP_00EE\n");
+            break;
+        }
+
+        case OP_0NNN:
+        {
+            printf_s("Initiating OP_0NNN\n");
+            break;
+        }
+
         case OP_1NNN:
         {
             //This instruction should simply set PC to NNN, 
@@ -338,7 +350,31 @@ void instruction(CHIP8* chip8, int instruction)
             chip8->pc = addr;
             break;
         }
+
+        case OP_2NNN:
+        {
+            printf_s("Initiating OP_2NNN\n");
+            break;
+        }
         
+        case OP_3XNN:
+        {
+            printf_s("Initiating OP_3XNN\n");
+            break;
+        }
+
+        case OP_4XNN:
+        {
+            printf_s("Initiating OP_4XNN\n");
+            break;
+        }
+
+        case OP_5XY0:
+        {
+            printf_s("Initiating OP_5XY0\n");
+            break;
+        }
+
         case OP_6XNN:
         {
             // Simply set the register Vx to the value NN.
@@ -347,6 +383,18 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned short NN = chip8->opcode & 0x00FFu;
             chip8->registers[Vx] = NN;
             printf_s("The value of the register V%x should be 0x%x and is: 0x%x\n", Vx, NN, chip8->registers[Vx]);
+            break;
+        }
+
+        case OP_7XNN:
+        {
+            // Add the value NN to Vx (no flag).
+            printf_s("Initiating OP_7XNN\n");
+            unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
+            unsigned short NN = (chip8->opcode & 0x00FFu);
+            printf_s("Should add to V%x (value=0x%x) the number %x;", Vx, chip8->registers[Vx], NN);
+            chip8->registers[Vx] += NN;
+            printf_s(" new value is: 0x%x\n", chip8->registers[Vx]);
             break;
         }
 
@@ -363,6 +411,7 @@ void instruction(CHIP8* chip8, int instruction)
         case OP_8XY1:
         {
             // Vx is set to Vx OR Vy.
+            printf_s("Initiating OP_8XY1\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vx] | chip8->registers[Vy];
@@ -372,6 +421,7 @@ void instruction(CHIP8* chip8, int instruction)
         case OP_8XY2:
         {
             // Vx is set to Vx AND Vy.
+            printf_s("Initiating OP_8XY2\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vx] & chip8->registers[Vy];
@@ -381,6 +431,7 @@ void instruction(CHIP8* chip8, int instruction)
         case OP_8XY3:
         {
             // Vx is set to Vx XOR Vy.
+            printf_s("Initiating OP_8XY3\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vx] ^ chip8->registers[Vy];
@@ -395,6 +446,7 @@ void instruction(CHIP8* chip8, int instruction)
             // If the result is larger than 255 (and thus overflows 
             // the 8-bit register VX), the flag register VF is set to 1.
             // If it doesn’t overflow, VF is set to 0.
+            printf_s("Initiating OP_8XY4\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vx] + chip8->registers[Vy];
@@ -406,18 +458,10 @@ void instruction(CHIP8* chip8, int instruction)
         case OP_8XY5:
         {
             // sets VX to the result of VX - VY.
+            printf_s("Initiating OP_8XY5\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vx] - chip8->registers[Vy];
-            break;
-        }
-
-        case OP_8XY7:
-        {
-            // 8XY7 sets VX to the result of VY - VX.
-            unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
-            unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
-            chip8->registers[Vx] = chip8->registers[Vy] - chip8->registers[Vx];
             break;
         }
 
@@ -426,6 +470,7 @@ void instruction(CHIP8* chip8, int instruction)
             // Set VX to the value of VY, shift the value of VX
             // one bit to the right, set VF to 1 if the bit that
             // was shifted out was 1, or 0 if it was 0.
+            printf_s("Initiating OP_8XY6\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vy];
@@ -436,11 +481,22 @@ void instruction(CHIP8* chip8, int instruction)
             break;
         }
 
+        case OP_8XY7:
+        {
+            // 8XY7 sets VX to the result of VY - VX.
+            printf_s("Initiating OP_8XY7\n");
+            unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
+            unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
+            chip8->registers[Vx] = chip8->registers[Vy] - chip8->registers[Vx];
+            break;
+        }
+
         case OP_8XYE:
         {
             // Set VX to the value of VY, shift the value of VX
             // one bit to the left, set VF to 1 if the bit that
             // was shifted out was 1, or 0 if it was 0.
+            printf_s("Initiating OP_8XYE\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vy];
@@ -451,15 +507,9 @@ void instruction(CHIP8* chip8, int instruction)
             break;
         }
 
-        case OP_7XNN:
+        case OP_9XY0:
         {
-            // Add the value NN to Vx (no flag).
-            printf_s("Initiating OP_7XNN\n");
-            unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
-            unsigned short NN = (chip8->opcode & 0x00FFu);
-            printf_s("Should add to V%x (value=0x%x) the number %x;", Vx, chip8->registers[Vx], NN);
-            chip8->registers[Vx] += NN;
-            printf_s(" new value is: 0x%x\n", chip8->registers[Vx]);
+            printf_s("Initiating OP_9XY0\n");
             break;
         }
 
@@ -473,9 +523,11 @@ void instruction(CHIP8* chip8, int instruction)
             break;
         }
 
-        // case OP_BNNN: ;
-            
-        //     break;
+        case OP_BNNN:
+        {
+            printf_s("Initiating OP_BNNN\n");
+            break;
+        }
 
         case OP_CXNN:
         {
@@ -529,7 +581,77 @@ void instruction(CHIP8* chip8, int instruction)
             break;
         }
 
-        default:
+        case OP_EX9E:
+        {
+            printf_s("Initiating OP_EX9E\n");
             break;
+        }
+
+        case OP_EXA1:
+        {
+            printf_s("Initiating OP_EXA1\n");
+            break;
+        }
+
+        case OP_FX07:
+        {
+            printf_s("Initiating OP_FX07\n");
+            break;
+        }
+        
+        case OP_FX0A:
+        {
+            printf_s("Initiating OP_FX0A\n");
+            break;
+        }
+
+        case OP_FX15:
+        {
+            printf_s("Initiating OP_FX15\n");
+            break;
+        }
+
+        case OP_FX18:
+        {
+            printf_s("Initiating OP_FX18\n");
+            break;
+        }
+
+        case OP_FX1E:
+        {
+            printf_s("Initiating OP_FX1E\n");
+            break;
+        }
+
+        case OP_FX29:
+        {
+            printf_s("Initiating OP_FX29\n");
+            break;
+        }
+
+        case OP_FX33:
+        {
+            printf_s("Initiating OP_FX33\n");
+            break;
+        }
+
+        case OP_FX55:
+        {
+            printf_s("Initiating OP_FX55\n");
+            break;
+        }
+
+        case OP_FX65:
+        {
+            printf_s("Initiating OP_FX65\n");
+            break;
+        }
+
+        default:
+        {
+            printf_s("There seems to be an error with determining the opcode.\n");
+            exit(DET_OPCODE_ERROR);
+            break;
+        }
     }
 }
