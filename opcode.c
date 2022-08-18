@@ -6,7 +6,7 @@
 
 void det_opcode(CHIP8* chip8)
 {
-    printf_s("Opcode in determination function: %x\n", chip8->opcode);
+    // printf_s("Opcode in determination function: %x\n", chip8->opcode);
     unsigned char frst_bt = (chip8->opcode & 0xF000u) >> 12;
     switch (frst_bt)
     {
@@ -346,6 +346,7 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short NN = chip8->opcode & 0x00FFu;
             chip8->registers[Vx] = NN;
+            printf_s("The value of the register V%x should be 0x%x and is: 0x%x\n", Vx, NN, chip8->registers[Vx]);
             break;
         }
 
@@ -456,7 +457,9 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_7XNN\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short NN = (chip8->opcode & 0x00FFu);
-            chip8->registers[Vx] = chip8->registers[Vx] + NN;
+            printf_s("Should add to V%x (value=0x%x) the number %x;", Vx, chip8->registers[Vx], NN);
+            chip8->registers[Vx] += NN;
+            printf_s(" new value is: 0x%x\n", chip8->registers[Vx]);
             break;
         }
 
@@ -466,6 +469,7 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_ANNN\n");
             unsigned short NNN = (chip8->opcode & 0x0FFFu);
             chip8->index = NNN;
+            printf_s("Index register = 0x%x\n", NNN);
             break;
         }
 

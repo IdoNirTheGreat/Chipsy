@@ -65,7 +65,7 @@ void init_chip8(CHIP8* chip8, char const* rom)
 
 void cycle(CHIP8* chip8)
 {
-    printf_s("Data in memory: %4x %4x\n", chip8->memory[chip8->pc], chip8->memory[chip8->pc + 1]);
+    // printf_s("Data in memory: %4x %4x\n", chip8->memory[chip8->pc], chip8->memory[chip8->pc + 1]);
     chip8->opcode = (chip8->memory[chip8->pc] << 8) + chip8->memory[chip8->pc + 1];
     printf_s("Current opcode: %04x\n", chip8->opcode);
     // det_opcode(chip8);
