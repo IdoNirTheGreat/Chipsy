@@ -6,7 +6,7 @@
 
 void det_opcode(CHIP8* chip8)
 {
-    // printf_s("Opcode in determination function: %x\n", chip8->opcode);
+    printf_s("Opcode in determination function: %x\n", chip8->opcode);
     unsigned char frst_bt = (chip8->opcode & 0xF000u) >> 12;
     switch (frst_bt)
     {
@@ -25,13 +25,15 @@ void det_opcode(CHIP8* chip8)
                     instruction(chip8, OP_00EE);
                     break;
                 }
-                
+
                 default:
                 {
                     instruction(chip8, OP_0NNN);
                     break;
                 }
             }
+            
+            break;
         }
 
         case 0x1:
@@ -85,7 +87,7 @@ void det_opcode(CHIP8* chip8)
                 {
                     instruction(chip8, OP_8XY0);
                     break;
-                    
+
                 }
 
                 case 0x1:
@@ -135,7 +137,7 @@ void det_opcode(CHIP8* chip8)
                     instruction(chip8, OP_8XYE);
                     break;
                 }
-                
+
                 default:
                 {
                     printf_s("Opcode determination function has failed!\n");
@@ -234,7 +236,7 @@ void det_opcode(CHIP8* chip8)
                             break;
                         }
                     }
-                    
+
                     break;
                 }
 
@@ -322,9 +324,15 @@ void instruction(CHIP8* chip8, int instruction)
     {
         case OP_00E0:
         {
+            printf_s("Instruction = %d\n", instruction);
             printf_s("Initiating OP_00E0\n");
             printf_s("Clearing screen...\n");
             memset(chip8->monitor, 0, sizeof(chip8->monitor[0]));
+            printf_s("Instruction = %d\n", instruction);
+            chip8->pc += 2;
+            printf_s("PC at 0x%x\n", chip8->pc);
+            printf_s("opcode: 0x%x\n", chip8->opcode);
+            printf_s("Instruction = %d\n", instruction);
             break;
         }
 
@@ -342,9 +350,11 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_1NNN:
         {
-            // This instruction should simply set PC to NNN, 
+            // This instruction should simply set PC to NNN,
             // causing the program to jump to that memory location.
             // Do not increment the PC afterwards, it jumps directly there.
+            printf_s("Instruction = %d\n", instruction);
+            printf_s("opcode in 1NNN: 0x%x\n", chip8->opcode);
             printf_s("Initiating OP_1NNN\n");
             unsigned short NNN = chip8->opcode & 0x0FFFu;
             printf_s("Should change PC (value=0x%x) to 0x%x; ", chip8->pc, NNN);
@@ -361,7 +371,7 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_2NNN\n");
             break;
         }
-        
+
         case OP_3XNN:
         {
             printf_s("Initiating OP_3XNN\n");
@@ -388,6 +398,7 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned short NN = chip8->opcode & 0x00FFu;
             chip8->registers[Vx] = NN;
             printf_s("The value of the register V%x should be 0x%x and is: 0x%x\n", Vx, NN, chip8->registers[Vx]);
+            chip8->pc += 2;
             break;
         }
 
@@ -400,6 +411,7 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Should add to V%x (value=0x%x) the number %x;", Vx, chip8->registers[Vx], NN);
             chip8->registers[Vx] += NN;
             printf_s(" new value is: 0x%x\n", chip8->registers[Vx]);
+            chip8->pc += 2;
             break;
         }
 
@@ -448,7 +460,7 @@ void instruction(CHIP8* chip8, int instruction)
             // VX is set to the value of VX plus the value of VY.
             // VY is not affected.
             // Unlike 7XNN, this addition will affect the carry flag.
-            // If the result is larger than 255 (and thus overflows 
+            // If the result is larger than 255 (and thus overflows
             // the 8-bit register VX), the flag register VF is set to 1.
             // If it doesn’t overflow, VF is set to 0.
             printf_s("Initiating OP_8XY4\n");
@@ -525,6 +537,7 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned short NNN = (chip8->opcode & 0x0FFFu);
             chip8->index = NNN;
             printf_s("Index register = 0x%x\n", NNN);
+            chip8->pc += 2;
             break;
         }
 
@@ -551,8 +564,8 @@ void instruction(CHIP8* chip8, int instruction)
             // the I index register is holding to the screen, at the
             // horizontal X coordinate in VX and the Y coordinate in VY.
             // All the pixels that are “on” in the sprite will flip the
-            // pixels on the screen that it is drawn to. If any pixels 
-            // on the screen were turned “off” by this, the VF flag 
+            // pixels on the screen that it is drawn to. If any pixels
+            // on the screen were turned “off” by this, the VF flag
             // register is set to 1. Otherwise, it’s set to 0.
             printf_s("Initiating OP_DXYN\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
@@ -562,7 +575,7 @@ void instruction(CHIP8* chip8, int instruction)
             chip8->registers[0x000F] = 0x0000;
             unsigned char N = chip8->opcode & 0x000F;
             printf_s("opcode = %x, N=%x\n", chip8->opcode, N);
-            
+
             for (unsigned int i = 0; i < N; ++i)
             {
                 unsigned char sprite_byte = chip8->memory[chip8->index + i];
@@ -576,13 +589,13 @@ void instruction(CHIP8* chip8, int instruction)
                     {
                         if (*actual_pixel == 0xFFFFFFFF)
                             chip8->registers[0x000F] = 1;
-                        
+
                         *actual_pixel ^= 0xFFFFFFFF;
                     }
                 }
             }
 
-
+            chip8->pc += 2;
             break;
         }
 
@@ -603,7 +616,7 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_FX07\n");
             break;
         }
-        
+
         case OP_FX0A:
         {
             printf_s("Initiating OP_FX0A\n");
