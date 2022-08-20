@@ -4,6 +4,17 @@
 # include "opcode.h"
 # include "randGen.h"
 
+#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
+#define BYTE_TO_BINARY(byte)  \
+  (byte & 0x80 ? '1' : '0'), \
+  (byte & 0x40 ? '1' : '0'), \
+  (byte & 0x20 ? '1' : '0'), \
+  (byte & 0x10 ? '1' : '0'), \
+  (byte & 0x08 ? '1' : '0'), \
+  (byte & 0x04 ? '1' : '0'), \
+  (byte & 0x02 ? '1' : '0'), \
+  (byte & 0x01 ? '1' : '0') 
+
 void det_opcode(CHIP8* chip8)
 {
     printf_s("Opcode in determination function: %x\n", chip8->opcode);
@@ -308,7 +319,6 @@ void det_opcode(CHIP8* chip8)
             }
         }
 
-
         default:
         {
             printf_s("There seems to be an error with determining the opcode.\n");
@@ -570,28 +580,49 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_DXYN\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
-            unsigned char X = chip8->registers[Vx] & 0x003F;
-            unsigned char Y = chip8->registers[Vx] & 0x001F;
-            chip8->registers[0x000F] = 0x0000;
-            unsigned char N = chip8->opcode & 0x000F;
-            printf_s("opcode = %x, N=%x\n", chip8->opcode, N);
+            unsigned char X = chip8->registers[Vx] & 0x3Fu;
+            unsigned char Y = chip8->registers[Vx] & 0x1Fu;
+            chip8->registers[0xFu] = 0x0u;
+            unsigned char N = chip8->opcode & 0xFu;
+            printf_s("opcode = %x, X=0x%x, Y=0x%x, N=0x%x\n", chip8->opcode, Vx, Vy, N);
 
             for (unsigned int i = 0; i < N; ++i)
             {
-                unsigned char sprite_byte = chip8->memory[chip8->index + i];
-
+                unsigned char current_byte = chip8->memory[chip8->index + i];
+                // printf_s("Current byte: 0b"BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(current_byte));
+                // printf_s("\n");
                 for (unsigned int j = 0; j < 8; ++j)
                 {
-                    unsigned char sprite_pixel = sprite_byte & (0x80 >> j);
-                    unsigned long* actual_pixel = &chip8->monitor[(Y + i) * COLS + (X + j)];
-
-                    if (sprite_pixel)
+                    // Stop if reached the edge of the screen:
+                    if ((COLS * (Y + i) + (X + j)) >= (COLS * ROWS))
                     {
-                        if (*actual_pixel == 0xFFFFFFFF)
-                            chip8->registers[0x000F] = 1;
+                        break;
+                    } 
 
-                        *actual_pixel ^= 0xFFFFFFFF;
+                    // Extract the value of the Jth pixel inside the current byte by using AND:
+                    unsigned char current_pixel = current_byte & (0x80 >> j);
+                    if (current_pixel && chip8->monitor[(COLS * Y) + X])
+                    {
+                        chip8->monitor[COLS * (Y + i) + (X + j)] = 0;
+                        chip8->registers[0xFu] = 0x1u;
                     }
+                    
+                    if (current_pixel && !chip8->monitor[(COLS * Y) + X])
+                    {
+                        chip8->monitor[COLS * (Y + i) + (X + j)] = 1;
+                    }
+
+                    // TO DELETE:
+                    // unsigned char sprite_pixel = sprite_byte & (0x80 >> j);
+                    // unsigned long* actual_pixel = &chip8->monitor[(Y + i) * COLS + (X + j)];
+
+                    // if (sprite_pixel)
+                    // {
+                    //     if (*actual_pixel == 0xFFFFFFFF)
+                    //         chip8->registers[0x000F] = 1;
+
+                    //     *actual_pixel ^= 0xFFFFFFFF;
+                    // }
                 }
             }
 
