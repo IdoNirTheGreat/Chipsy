@@ -3,6 +3,8 @@
 # include <string.h>
 # include "opcode.h"
 # include "randGen.h"
+# define SCREEN_WIDTH 64
+# define SCREEN_HEIGHT 32
 
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
 #define BYTE_TO_BINARY(byte)  \
@@ -334,15 +336,12 @@ void instruction(CHIP8* chip8, int instruction)
     {
         case OP_00E0:
         {
-            printf_s("Instruction = %d\n", instruction);
             printf_s("Initiating OP_00E0\n");
             printf_s("Clearing screen...\n");
             memset(chip8->monitor, 0, sizeof(chip8->monitor[0]));
-            printf_s("Instruction = %d\n", instruction);
             chip8->pc += 2;
             printf_s("PC at 0x%x\n", chip8->pc);
             printf_s("opcode: 0x%x\n", chip8->opcode);
-            printf_s("Instruction = %d\n", instruction);
             break;
         }
 
@@ -363,13 +362,13 @@ void instruction(CHIP8* chip8, int instruction)
             // This instruction should simply set PC to NNN,
             // causing the program to jump to that memory location.
             // Do not increment the PC afterwards, it jumps directly there.
-            printf_s("Instruction = %d\n", instruction);
             printf_s("opcode in 1NNN: 0x%x\n", chip8->opcode);
             printf_s("Initiating OP_1NNN\n");
             unsigned short NNN = chip8->opcode & 0x0FFFu;
-            printf_s("Should change PC (value=0x%x) to 0x%x; ", chip8->pc, NNN);
+            printf_s("Should change PC (value=0x%x) to 0x%x; In decimal %d\n", chip8->pc, NNN, NNN);
             chip8->pc = NNN;
-            printf_s("PC updated value: 0x%x\n", chip8->pc);
+            printf_s("PC updated value: 0x%x; In decimal %d\n", chip8->pc, chip8->pc);
+            printf_s("Incremented PC = 0x%x\n", chip8->pc);
             printf_s("memory at 0x%x=0x%x, 0x%x=0x%x\n", chip8->pc, chip8->memory[chip8->pc], chip8->pc + 1, chip8->memory[chip8->pc + 1]);
             unsigned long temp = (chip8->memory[chip8->pc] << 8) + chip8->memory[chip8->pc + 1];
             printf_s("New opcode should be 0x%x\n", temp);
@@ -584,49 +583,30 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned char Y = chip8->registers[Vx] & 0x1Fu;
             chip8->registers[0xFu] = 0x0u;
             unsigned char N = chip8->opcode & 0xFu;
-            printf_s("opcode = %x, X=0x%x, Y=0x%x, N=0x%x\n", chip8->opcode, Vx, Vy, N);
 
-            for (unsigned int i = 0; i < N; ++i)
+            for (int row = 1; row <= N; ++row)
             {
-                unsigned char current_byte = chip8->memory[chip8->index + i];
-                // printf_s("Current byte: 0b"BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(current_byte));
-                // printf_s("\n");
-                for (unsigned int j = 0; j < 8; ++j)
+                unsigned char sprite_byte = chip8->memory[chip8->index + row];
+                for (int bit = 0; bit < 8; ++bit)
                 {
-                    // Stop if reached the edge of the screen:
-                    if ((COLS * (Y + i) + (X + j)) >= (COLS * ROWS))
-                    {
-                        break;
-                    } 
+                    unsigned char sprite_pixel = sprite_byte & (0x80u >> bit);
+                    unsigned char screen_pixel = chip8->monitor[((Y + row) * SCREEN_HEIGHT) + X + bit];
 
-                    // Extract the value of the Jth pixel inside the current byte by using AND:
-                    unsigned char current_pixel = current_byte & (0x80 >> j);
-                    if (current_pixel && chip8->monitor[(COLS * Y) + X])
+                    if (sprite_pixel)
                     {
-                        chip8->monitor[COLS * (Y + i) + (X + j)] = 0;
-                        chip8->registers[0xFu] = 0x1u;
+                        if(screen_pixel)
+                        {
+                            chip8->registers[0xF] = 1;
+                        }
+                        
+                        chip8->monitor[(Y + row) * SCREEN_HEIGHT + X + bit] ^= 1;
                     }
-                    
-                    if (current_pixel && !chip8->monitor[(COLS * Y) + X])
-                    {
-                        chip8->monitor[COLS * (Y + i) + (X + j)] = 1;
-                    }
-
-                    // TO DELETE:
-                    // unsigned char sprite_pixel = sprite_byte & (0x80 >> j);
-                    // unsigned long* actual_pixel = &chip8->monitor[(Y + i) * COLS + (X + j)];
-
-                    // if (sprite_pixel)
-                    // {
-                    //     if (*actual_pixel == 0xFFFFFFFF)
-                    //         chip8->registers[0x000F] = 1;
-
-                    //     *actual_pixel ^= 0xFFFFFFFF;
-                    // }
                 }
             }
 
             chip8->pc += 2;
+            chip8->update_screen = 1;
+            printf_s("Exited instruction function.\n");
             break;
         }
 

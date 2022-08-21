@@ -60,6 +60,7 @@ void init_chip8(CHIP8* chip8, char const* rom)
     load_ROM(chip8, rom);
     load_fonts(chip8);
     chip8->pc = START_ADDRESS;
+    chip8->update_screen = 0;
     printf_s("PC at 0x%x\n", chip8->pc);
 }
 

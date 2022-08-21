@@ -19,6 +19,7 @@ typedef struct CHIP8 /** The CHIP8 Struct which holds all VM's attributes.*/
     unsigned char keypad[KEYS];
     unsigned char monitor[COLS * ROWS];
     unsigned long opcode;
+    unsigned char update_screen;
 } CHIP8; 
 
 void load_ROM(CHIP8* chip8, char const* filename); /** Loads ROM data from filename to chip8 VM.*/
