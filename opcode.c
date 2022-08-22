@@ -580,11 +580,10 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             unsigned char X = chip8->registers[Vx] & 0x3Fu;
-            unsigned char Y = chip8->registers[Vx] & 0x1Fu;
+            unsigned char Y = chip8->registers[Vy] & 0x1Fu;
             chip8->registers[0xFu] = 0x0u;
             unsigned char N = chip8->opcode & 0xFu;
-
-            for (int row = 1; row <= N; ++row)
+            for (int row = 0; row < N; ++row)
             {
                 unsigned char sprite_byte = chip8->memory[chip8->index + row];
                 for (int bit = 0; bit < 8; ++bit)
@@ -606,7 +605,6 @@ void instruction(CHIP8* chip8, int instruction)
 
             chip8->pc += 2;
             chip8->update_screen = 1;
-            printf_s("Exited instruction function.\n");
             break;
         }
 
