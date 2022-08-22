@@ -3,8 +3,8 @@
 # include <string.h>
 # include "opcode.h"
 # include "randGen.h"
-# define SCREEN_WIDTH 64
-# define SCREEN_HEIGHT 32
+# define COLS 64
+# define ROWS 32
 
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
 #define BYTE_TO_BINARY(byte)  \
@@ -583,13 +583,15 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned char Y = chip8->registers[Vy] & 0x1Fu;
             chip8->registers[0xFu] = 0x0u;
             unsigned char N = chip8->opcode & 0xFu;
+            int sum = 0;
+            printf_s("Drawn pixels: [");
             for (int row = 0; row < N; ++row)
             {
                 unsigned char sprite_byte = chip8->memory[chip8->index + row];
                 for (int bit = 0; bit < 8; ++bit)
                 {
                     unsigned char sprite_pixel = sprite_byte & (0x80u >> bit);
-                    unsigned char screen_pixel = chip8->monitor[((Y + row) * SCREEN_HEIGHT) + X + bit];
+                    unsigned char screen_pixel = chip8->monitor[((Y + row) * ROWS) + X];
 
                     if (sprite_pixel)
                     {
@@ -598,11 +600,17 @@ void instruction(CHIP8* chip8, int instruction)
                             chip8->registers[0xF] = 1;
                         }
                         
-                        chip8->monitor[(Y + row) * SCREEN_HEIGHT + X + bit] ^= 1;
+                        chip8->monitor[(Y + row) * ROWS + X + bit] ^= 1;
+                    }
+
+                    if (chip8->monitor[(Y + row) * COLS + X + bit])
+                    {
+                        printf_s("[%d,%d], ", (X + bit), (Y + row));
+                        sum++;
                     }
                 }
             }
-
+            printf_s("]\nTotal = %d\n", sum);
             chip8->pc += 2;
             chip8->update_screen = 1;
             break;
