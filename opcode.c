@@ -6,17 +6,6 @@
 # define COLS 64
 # define ROWS 32
 
-#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
-#define BYTE_TO_BINARY(byte)  \
-  (byte & 0x80 ? '1' : '0'), \
-  (byte & 0x40 ? '1' : '0'), \
-  (byte & 0x20 ? '1' : '0'), \
-  (byte & 0x10 ? '1' : '0'), \
-  (byte & 0x08 ? '1' : '0'), \
-  (byte & 0x04 ? '1' : '0'), \
-  (byte & 0x02 ? '1' : '0'), \
-  (byte & 0x01 ? '1' : '0') 
-
 void det_opcode(CHIP8* chip8)
 {
     printf_s("Opcode in determination function: %x\n", chip8->opcode);
@@ -583,8 +572,8 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned char Y = chip8->registers[Vy] & 0x1Fu;
             chip8->registers[0xFu] = 0x0u;
             unsigned char N = chip8->opcode & 0xFu;
-            int sum = 0;
-            printf_s("Drawn pixels: [");
+            // int sum = 0;
+            // printf_s("Drawn pixels: [");
             for (int row = 0; row < N; ++row)
             {
                 unsigned char sprite_byte = chip8->memory[chip8->index + row];
@@ -600,17 +589,18 @@ void instruction(CHIP8* chip8, int instruction)
                             chip8->registers[0xF] = 1;
                         }
                         
-                        chip8->monitor[(Y + row) * ROWS + X + bit] ^= 1;
+                        chip8->monitor[(Y + row) * ROWS + X + bit] ^= 0x1;
                     }
 
-                    if (chip8->monitor[(Y + row) * COLS + X + bit])
-                    {
-                        printf_s("[%d,%d], ", (X + bit), (Y + row));
-                        sum++;
-                    }
+                    // if (chip8->monitor[(Y + row) * ROWS + X + bit])
+                    // {
+                    //     printf_s("[%d,%d], ", (X + bit) , (Y + row));
+                    //     // printf_s("%d, ", (Y + row) * ROWS + X + bit);
+                    //     sum++;
+                    // }
                 }
             }
-            printf_s("]\nTotal = %d\n", sum);
+            // printf_s("]\nTotal = %d\n", sum);
             chip8->pc += 2;
             chip8->update_screen = 1;
             break;
