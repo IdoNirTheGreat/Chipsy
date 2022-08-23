@@ -365,19 +365,58 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_3XNN:
         {
+            // Skips the next instruction if VX equals NN. 
+            // (Usually the next instruction is a jump to skip
+            // a code block);
             printf_s("Initiating OP_3XNN\n");
+            unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
+            unsigned char NN = chip8->opcode & 0x00FFu;
+            if (chip8->registers[Vx] == NN)
+            {
+                chip8->pc += 4;
+            }
+            else
+            {
+                chip8->pc += 2;
+            }
             break;
         }
 
         case OP_4XNN:
         {
+            // Skips the next instruction if VX does not equal NN.
+            // (Usually the next instruction is a jump to skip a code
+            // block);
             printf_s("Initiating OP_4XNN\n");
+            unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
+            unsigned char NN = chip8->opcode & 0x00FFu;
+            if (chip8->registers[Vx] != NN)
+            {
+                chip8->pc += 4;
+            }
+            else
+            {
+                chip8->pc += 2;
+            }
             break;
         }
 
         case OP_5XY0:
         {
+            // Skips the next instruction if VX equals VY.
+            // (Usually the next instruction is a jump to skip
+            // a code block);
             printf_s("Initiating OP_5XY0\n");
+            unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
+            unsigned char Vy = (chip8->opcode & 0x00F0u) >> 4u;
+            if (chip8->registers[Vx] == chip8->registers[Vy])
+            {
+                chip8->pc += 4;
+            }
+            else
+            {
+                chip8->pc += 2;
+            }
             break;
         }
 
@@ -422,7 +461,7 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_8XY1\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
-            chip8->registers[Vx] = chip8->registers[Vx] | chip8->registers[Vy];
+            chip8->registers[Vx] |= chip8->registers[Vy];
             break;
         }
 
@@ -432,7 +471,7 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_8XY2\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
-            chip8->registers[Vx] = chip8->registers[Vx] & chip8->registers[Vy];
+            chip8->registers[Vx] &= chip8->registers[Vy];
             break;
         }
 
@@ -442,7 +481,7 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_8XY3\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
-            chip8->registers[Vx] = chip8->registers[Vx] ^ chip8->registers[Vy];
+            chip8->registers[Vx] ^= chip8->registers[Vy];
             break;
         }
 
@@ -457,7 +496,7 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_8XY4\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
-            chip8->registers[Vx] = chip8->registers[Vx] + chip8->registers[Vy];
+            chip8->registers[Vx] += chip8->registers[Vy];
             if (chip8->registers[Vx] > 0x00FF) chip8->registers[0x000F] = 0x0001;
             else chip8->registers[0x000F] = 0x0000;
             break;
@@ -469,7 +508,7 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_8XY5\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
-            chip8->registers[Vx] = chip8->registers[Vx] - chip8->registers[Vy];
+            chip8->registers[Vx] -= chip8->registers[Vy];
             break;
         }
 
@@ -527,19 +566,23 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_ANNN\n");
             unsigned short NNN = (chip8->opcode & 0x0FFFu);
             chip8->index = NNN;
-            printf_s("Index register = 0x%x\n", NNN);
             chip8->pc += 2;
             break;
         }
 
         case OP_BNNN:
         {
+            // Jumps to the address NNN plus V0.
             printf_s("Initiating OP_BNNN\n");
+            unsigned char NNN = chip8->opcode & 0x0FFFu;
+            chip8->pc = chip8->registers[0x0] + NNN;
             break;
         }
 
         case OP_CXNN:
         {
+            // Sets VX to the result of a bitwise and operation on
+            // a random number (Typically: 0 to 255) and NN.
             printf_s("Initiating OP_CXNN\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short NN = chip8->opcode & 0x00FFu;
