@@ -5,7 +5,7 @@
 # define SCALE 10
 # define SCREEN_WIDTH 64 * SCALE
 # define SCREEN_HEIGHT 32 * SCALE
-# define MONITOR_REFRESH_INTERVAL 100 // In miliseconds
+# define MONITOR_REFRESH_INTERVAL 16 // In miliseconds (about 60 [Hz])
 # define R_VAL 0 // Red display value
 # define G_VAL 255 // Green display value
 # define B_VAL 0 // Blue display value
@@ -19,68 +19,14 @@ enum error_code
 
 void update_screen(SDL_Renderer* renderer, CHIP8* chip8)
 {
-    // int sum = 0;
-    // printf_s("Actually drawn pixels: ");
-    // SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-    // for (unsigned int row = 0; row < ROWS; ++row)
-    // {
-    //     for (unsigned int col = 0; col < COLS; ++col)
-    //     {
-    //         if (monitor[COLS * (col) + row] == 1)
-    //         {
-    //             SDL_RenderDrawPoint(renderer, row, col);
-    //             printf_s("[%d, %d], ", row, col);
-    //             sum++;
-    //         }
-    //     }
-    // }
-    // printf_s("]\nTotal = %d\n", sum);
-    // SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-    // int row = 0;
-    // int col = 0;
-    // int sum = 0;
-    // printf_s("Actually drawn pixels: ");
-    // for (int i = 0; i < (ROWS * COLS); i++)
-    // {
-    //     col++;
-    //     if (!(i % COLS))
-    //     {
-    //         row++;  
-    //         col = 0;         
-    //     }
-    //     if (monitor[i])
-    //     {
-    //         SDL_RenderDrawPoint(renderer, col, row);
-    //         printf_s("%d, ", i);
-    //         //printf_s("[%d, %d], ", col, row);
-    //         sum++;
-    //     }
-    // }
-    // printf_s("]\nTotal = %d\n", sum);
-    
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-    unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
-    unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
-    unsigned char X = chip8->registers[Vx] & 0x3Fu;
-    unsigned char Y = chip8->registers[Vy] & 0x1Fu;
-    chip8->registers[0xFu] = 0x0u;
-    unsigned char N = chip8->opcode & 0xFu;
-    // int sum = 0;
-    // printf_s("Actually drawn pixels: [");
-    for (int row = 0; row < N; ++row)
+    for (int i = 0; i < COLS; i++)
     {
-        unsigned char sprite_byte = chip8->memory[chip8->index + row];
-        for (int bit = 0; bit < 8; ++bit)
+        for (int j = 0; j < ROWS; j++)
         {
-            unsigned char sprite_pixel = sprite_byte & (0x80u >> bit);
-            unsigned char screen_pixel = chip8->monitor[((Y + row) * ROWS) + X];
-            
-            if (chip8->monitor[(Y + row) * ROWS + X + bit])
+            if (chip8->monitor[j][i])
             {
-                SDL_RenderDrawPoint(renderer, (X + bit), (Y + row));
-                // printf_s("[%d,%d], ", (X + bit) , (Y + row));
-                // printf_s("%d, ", (Y + row) * ROWS + X + bit);
-                // sum++;
+                SDL_RenderDrawPoint(renderer, i, j);
             }
         }
     }
@@ -130,7 +76,7 @@ int WinMain(int argc, char* args[])
             update_screen(renderer, &chipsy);
             chipsy.update_screen = 0;
             SDL_Delay(MONITOR_REFRESH_INTERVAL);
-            // SDL_Delay(3000); // For debugging
+            // SDL_Delay(3000); // For debugging graphics
         }
         printf_s("\n");
         

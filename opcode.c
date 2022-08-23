@@ -351,16 +351,9 @@ void instruction(CHIP8* chip8, int instruction)
             // This instruction should simply set PC to NNN,
             // causing the program to jump to that memory location.
             // Do not increment the PC afterwards, it jumps directly there.
-            printf_s("opcode in 1NNN: 0x%x\n", chip8->opcode);
             printf_s("Initiating OP_1NNN\n");
             unsigned short NNN = chip8->opcode & 0x0FFFu;
-            printf_s("Should change PC (value=0x%x) to 0x%x; In decimal %d\n", chip8->pc, NNN, NNN);
             chip8->pc = NNN;
-            printf_s("PC updated value: 0x%x; In decimal %d\n", chip8->pc, chip8->pc);
-            printf_s("Incremented PC = 0x%x\n", chip8->pc);
-            printf_s("memory at 0x%x=0x%x, 0x%x=0x%x\n", chip8->pc, chip8->memory[chip8->pc], chip8->pc + 1, chip8->memory[chip8->pc + 1]);
-            unsigned long temp = (chip8->memory[chip8->pc] << 8) + chip8->memory[chip8->pc + 1];
-            printf_s("New opcode should be 0x%x\n", temp);
             break;
         }
 
@@ -572,15 +565,14 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned char Y = chip8->registers[Vy] & 0x1Fu;
             chip8->registers[0xFu] = 0x0u;
             unsigned char N = chip8->opcode & 0xFu;
-            // int sum = 0;
-            // printf_s("Drawn pixels: [");
-            for (int row = 0; row < N; ++row)
+            
+            for (int row = 0; row < N; row++)
             {
                 unsigned char sprite_byte = chip8->memory[chip8->index + row];
                 for (int bit = 0; bit < 8; ++bit)
                 {
                     unsigned char sprite_pixel = sprite_byte & (0x80u >> bit);
-                    unsigned char screen_pixel = chip8->monitor[((Y + row) * ROWS) + X];
+                    unsigned char screen_pixel = chip8->monitor[Y + row][X];
 
                     if (sprite_pixel)
                     {
@@ -589,18 +581,11 @@ void instruction(CHIP8* chip8, int instruction)
                             chip8->registers[0xF] = 1;
                         }
                         
-                        chip8->monitor[(Y + row) * ROWS + X + bit] ^= 0x1;
+                        chip8->monitor[Y + row][X + bit] ^= 0x1;
                     }
-
-                    // if (chip8->monitor[(Y + row) * ROWS + X + bit])
-                    // {
-                    //     printf_s("[%d,%d], ", (X + bit) , (Y + row));
-                    //     // printf_s("%d, ", (Y + row) * ROWS + X + bit);
-                    //     sum++;
-                    // }
                 }
             }
-            // printf_s("]\nTotal = %d\n", sum);
+            
             chip8->pc += 2;
             chip8->update_screen = 1;
             break;

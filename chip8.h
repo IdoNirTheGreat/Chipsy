@@ -17,7 +17,7 @@ typedef struct CHIP8 /** The CHIP8 Struct which holds all VM's attributes.*/
     unsigned char delay_timer;
     unsigned char sound_timer;
     unsigned char keypad[KEYS];
-    unsigned char monitor[COLS * ROWS];
+    unsigned char monitor[ROWS][COLS];
     unsigned long opcode;
     unsigned char update_screen;
 } CHIP8; 
