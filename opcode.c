@@ -3,6 +3,7 @@
 # include <string.h>
 # include "opcode.h"
 # include "randGen.h"
+# include "fonts.h"
 # define COLS 64
 # define ROWS 32
 
@@ -336,13 +337,22 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_00EE:
         {
+            // This instruction finishes the subroutine in the
+            // top of the stack: it pops the subroutine out of
+            // the stack, and sets the pc to the new subroutine
+            // in the top of the stack.
             printf_s("Initiating OP_00EE\n");
+            --chip8->sp;
+            chip8->pc = chip8->stack[chip8->sp];
             break;
         }
 
         case OP_0NNN:
         {
+            // Call machine language subroutine at address NNN.
             printf_s("Initiating OP_0NNN\n");
+            unsigned short NNN = chip8->opcode & 0x0FFFu;
+            chip8->pc = NNN;
             break;
         }
 
@@ -359,7 +369,15 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_2NNN:
         {
+            // This instruction calls the subroutine in NNN:
+            // Instead of jumping like in 1NNN, it pushes the
+            // subroutine to the stack, and sets the pc to the 
+            // new subroutine.
             printf_s("Initiating OP_2NNN\n");
+            unsigned short NNN = chip8->opcode & 0x0FFFu;
+            chip8->stack[chip8->sp] = NNN;
+            ++chip8->sp;
+            chip8->pc = NNN;
             break;
         }
 
@@ -557,6 +575,16 @@ void instruction(CHIP8* chip8, int instruction)
         case OP_9XY0:
         {
             printf_s("Initiating OP_9XY0\n");
+            unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
+            unsigned char Vy = (chip8->opcode & 0x00F0u) >> 4u;
+            if (chip8->registers[Vx] != chip8->registers[Vy])
+            {
+                chip8->pc += 4;
+            }
+            else
+            {
+                chip8->pc += 2;
+            }
             break;
         }
 
@@ -574,7 +602,7 @@ void instruction(CHIP8* chip8, int instruction)
         {
             // Jumps to the address NNN plus V0.
             printf_s("Initiating OP_BNNN\n");
-            unsigned char NNN = chip8->opcode & 0x0FFFu;
+            unsigned short NNN = chip8->opcode & 0x0FFFu;
             chip8->pc = chip8->registers[0x0] + NNN;
             break;
         }
@@ -678,7 +706,11 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_FX29:
         {
+            // The index register I is set to the address of 
+            // the hexadecimal character in VX.
             printf_s("Initiating OP_FX29\n");
+            unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
+            chip8->index = FONTSET_START_ADDRESS + Vx;
             break;
         }
 
@@ -690,13 +722,36 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_FX55:
         {
+            // For FX55, the value of each variable register from V0
+            // to VX inclusive (if X is 0, then only V0) will be stored
+            // in successive memory addresses, starting with the one 
+            // that’s stored in I. V0 will be stored at the address in I,
+            // V1 will be stored in I + 1, and so on, until VX is stored
+            // in I + X.
             printf_s("Initiating OP_FX55\n");
+            unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
+            for (int i = 0; i <= Vx; i++)
+            {
+                chip8->memory[chip8->index + i] = chip8->registers[i];
+            }
             break;
         }
 
         case OP_FX65:
         {
+            // For FX65, the value of each variable register from V0
+            // to VX inclusive (if X is 0, then only V0) will be set
+            // in by values in successive memory addresses, starting 
+            // with the one that’s stored in I. V0 will be set as the
+            // the value in address in I, V1 will be set as the value
+            // in I + 1, and so on, until VX is set as the value in 
+            // I + X.
             printf_s("Initiating OP_FX65\n");
+            unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
+            for (int i = 0; i <= Vx; i++)
+            {
+                chip8->registers[i] = chip8->memory[chip8->index + i];
+            }
             break;
         }
 
