@@ -9,7 +9,7 @@
 # define R_VAL 0 // Red display value
 # define G_VAL 255 // Green display value
 # define B_VAL 0 // Blue display value
-# define FILENAME ".\\IBM_Logo.ch8"
+# define FILENAME ".\\test_opcode.ch8"
 
 enum error_code
 {
@@ -71,12 +71,14 @@ int WinMain(int argc, char* args[])
 
         // Emulated CPU Cycles:
         cycle(&chipsy);
+        SDL_Delay(500); // For debugging
         if (chipsy.update_screen)
         { 
             update_screen(renderer, &chipsy);
             chipsy.update_screen = 0;
             SDL_Delay(MONITOR_REFRESH_INTERVAL);
-            // SDL_Delay(3000); // For debugging graphics
+            --chipsy.delay_timer;
+            --chipsy.sound_timer;
         }
         printf_s("\n");
         

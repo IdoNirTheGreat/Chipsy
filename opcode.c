@@ -309,6 +309,7 @@ void det_opcode(CHIP8* chip8)
                     break;
                 }
             }
+            break;
         }
 
         default:
@@ -342,8 +343,31 @@ void instruction(CHIP8* chip8, int instruction)
             // the stack, and sets the pc to the new subroutine
             // in the top of the stack.
             printf_s("Initiating OP_00EE\n");
-            --chip8->sp;
-            chip8->pc = chip8->stack[chip8->sp];
+            chip8->stack[chip8->sp] = 0;
+            // if (!chip8->sp)
+            // {
+            //     chip8->pc += 2;
+            // }
+            
+            // else
+            // {
+                --chip8->sp;
+                chip8->pc = chip8->stack[chip8->sp];
+            // }
+            
+            // else
+            // {
+            //     --chip8->sp;
+            //     chip8->pc = chip8->stack[chip8->sp];
+            //     chip8->stack[chip8->sp] = 0;
+                printf_s("Stack pointer = %d\n", chip8->sp);
+                printf_s("Print stack: ");
+                for (int i = 0; i < 16; i++)
+                {
+                    printf_s("|a[%d] = 0x%x|,", i, chip8->stack[i]);
+                }
+                printf_s("\n");
+            // }
             break;
         }
 
@@ -351,8 +375,7 @@ void instruction(CHIP8* chip8, int instruction)
         {
             // Call machine language subroutine at address NNN.
             printf_s("Initiating OP_0NNN\n");
-            unsigned short NNN = chip8->opcode & 0x0FFFu;
-            chip8->pc = NNN;
+            chip8->pc += 2;
             break;
         }
 
@@ -372,12 +395,23 @@ void instruction(CHIP8* chip8, int instruction)
             // This instruction calls the subroutine in NNN:
             // Instead of jumping like in 1NNN, it pushes the
             // subroutine to the stack, and sets the pc to the 
-            // new subroutine.
+            // new subroutine. Note that it should first push the
+            // next-to-current PC first so it can return to the current 
+            // place later.
             printf_s("Initiating OP_2NNN\n");
             unsigned short NNN = chip8->opcode & 0x0FFFu;
+            chip8->stack[chip8->sp] = chip8->pc + 2;
+            ++chip8->sp;
             chip8->stack[chip8->sp] = NNN;
             ++chip8->sp;
             chip8->pc = NNN;
+            printf_s("Stack pointer = %d\n", chip8->sp);
+            printf_s("Print stack: ");
+            for (int i = 0; i < 16; i++)
+            {
+                printf_s("|a[%d] = 0x%x|,", i, chip8->stack[i]);
+            }
+            printf_s("\n");
             break;
         }
 
@@ -445,7 +479,6 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short NN = chip8->opcode & 0x00FFu;
             chip8->registers[Vx] = NN;
-            printf_s("The value of the register V%x should be 0x%x and is: 0x%x\n", Vx, NN, chip8->registers[Vx]);
             chip8->pc += 2;
             break;
         }
@@ -456,9 +489,7 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_7XNN\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short NN = (chip8->opcode & 0x00FFu);
-            printf_s("Should add to V%x (value=0x%x) the number %x;", Vx, chip8->registers[Vx], NN);
             chip8->registers[Vx] += NN;
-            printf_s(" new value is: 0x%x\n", chip8->registers[Vx]);
             chip8->pc += 2;
             break;
         }
@@ -470,6 +501,7 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vy];
+            chip8->pc += 2;
             break;
         }
 
@@ -480,6 +512,7 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] |= chip8->registers[Vy];
+            chip8->pc += 2;
             break;
         }
 
@@ -490,6 +523,7 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] &= chip8->registers[Vy];
+            chip8->pc += 2;
             break;
         }
 
@@ -500,6 +534,7 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] ^= chip8->registers[Vy];
+            chip8->pc += 2;
             break;
         }
 
@@ -517,6 +552,7 @@ void instruction(CHIP8* chip8, int instruction)
             chip8->registers[Vx] += chip8->registers[Vy];
             if (chip8->registers[Vx] > 0x00FF) chip8->registers[0x000F] = 0x0001;
             else chip8->registers[0x000F] = 0x0000;
+            chip8->pc += 2;
             break;
         }
 
@@ -527,6 +563,7 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] -= chip8->registers[Vy];
+            chip8->pc += 2;
             break;
         }
 
@@ -543,6 +580,7 @@ void instruction(CHIP8* chip8, int instruction)
             chip8->registers[Vx] >> 1u;
             if (sh_bit) chip8->registers[0x000F] = 0x0001;
             else chip8->registers[0x000F] = 0x0000;
+            chip8->pc += 2;
             break;
         }
 
@@ -553,6 +591,7 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vy] - chip8->registers[Vx];
+            chip8->pc += 2;
             break;
         }
 
@@ -569,6 +608,7 @@ void instruction(CHIP8* chip8, int instruction)
             chip8->registers[Vx] << 1u;
             if (sh_bit) chip8->registers[0x000F] = 0x0001;
             else chip8->registers[0x000F] = 0x0000;
+            chip8->pc += 2;
             break;
         }
 
@@ -616,6 +656,7 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned short NN = chip8->opcode & 0x00FFu;
             unsigned char random = rand_byte() & NN;
             chip8->registers[Vx] = random;
+            chip8->pc += 2;
             break;
         }
 
@@ -665,6 +706,7 @@ void instruction(CHIP8* chip8, int instruction)
         case OP_EX9E:
         {
             printf_s("Initiating OP_EX9E\n");
+
             break;
         }
 
@@ -676,13 +718,26 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_FX07:
         {
+            // Sets Vx to the current value of the delay timer.
             printf_s("Initiating OP_FX07\n");
+            unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
+            chip8->registers[Vx] = chip8->delay_timer;
+            chip8->pc += 2;
             break;
         }
 
         case OP_FX0A:
         {
+            // This instruction “blocks”; it stops executing instructions
+            // and waits for key input. If a key is pressed while this 
+            // instruction is waiting for input, its hexadecimal value will
+            // be put in VX and execution continues. Timers still work at BG.
             printf_s("Initiating OP_FX0A\n");
+            unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
+            unsigned char input = 0;
+            scanf(&input);
+            chip8->registers[Vx] = input;
+            chip8->pc += 2;
             break;
         }
 
@@ -700,7 +755,11 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_FX1E:
         {
+            // The index register I will get the value in VX added to it.
             printf_s("Initiating OP_FX1E\n");
+            unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
+            chip8->index += chip8->registers[Vx];
+            chip8->pc += 2;
             break;
         }
 
@@ -711,12 +770,24 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_FX29\n");
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             chip8->index = FONTSET_START_ADDRESS + Vx;
+            chip8->pc += 2;
             break;
         }
 
         case OP_FX33:
         {
+            // This instruction takes the number stored in Vx,
+            // converts it to decimal base and stores it's decimal
+            // digits in the index register.
             printf_s("Initiating OP_FX33\n");
+            unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
+            unsigned char value = chip8->registers[Vx];
+            printf_s("Value in Vx: 0d%d\n", value);
+            chip8->memory[chip8->index] = value / 100;
+            chip8->memory[chip8->index + 1] = value / 10 - 10 * (value / 100);
+            chip8->memory[chip8->index + 2] = value % 10;
+            printf_s("Values in index and two next cells: %d, %d, %d\n", chip8->memory[chip8->index], chip8->memory[chip8->index + 1], chip8->memory[chip8->index + 2]);
+            chip8->pc += 2;
             break;
         }
 
@@ -734,6 +805,7 @@ void instruction(CHIP8* chip8, int instruction)
             {
                 chip8->memory[chip8->index + i] = chip8->registers[i];
             }
+            chip8->pc += 2;
             break;
         }
 
@@ -752,6 +824,7 @@ void instruction(CHIP8* chip8, int instruction)
             {
                 chip8->registers[i] = chip8->memory[chip8->index + i];
             }
+            chip8->pc += 2;
             break;
         }
 
