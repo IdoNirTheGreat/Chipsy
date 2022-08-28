@@ -423,11 +423,8 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_3XNN\n");
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned char NN = chip8->opcode & 0x00FFu;
+            chip8->pc += 2;
             if (chip8->registers[Vx] == NN)
-            {
-                chip8->pc += 4;
-            }
-            else
             {
                 chip8->pc += 2;
             }
@@ -442,11 +439,8 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_4XNN\n");
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned char NN = chip8->opcode & 0x00FFu;
+            chip8->pc += 2;
             if (chip8->registers[Vx] != NN)
-            {
-                chip8->pc += 4;
-            }
-            else
             {
                 chip8->pc += 2;
             }
@@ -577,7 +571,7 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vy];
             unsigned short sh_bit = chip8->registers[Vx] & 0x000F;
-            chip8->registers[Vx] >> 1u;
+            chip8->registers[Vx] >>= 1u;
             if (sh_bit) chip8->registers[0x000F] = 0x0001;
             else chip8->registers[0x000F] = 0x0000;
             chip8->pc += 2;
@@ -605,7 +599,7 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vy];
             unsigned short sh_bit = chip8->registers[Vx] & 0xF000;
-            chip8->registers[Vx] << 1u;
+            chip8->registers[Vx] <<= 1u;
             if (sh_bit) chip8->registers[0x000F] = 0x0001;
             else chip8->registers[0x000F] = 0x0000;
             chip8->pc += 2;
@@ -614,14 +608,12 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_9XY0:
         {
+            // Skips instruction if Vx and Vy are not equal.
             printf_s("Initiating OP_9XY0\n");
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned char Vy = (chip8->opcode & 0x00F0u) >> 4u;
+            chip8->pc += 2;
             if (chip8->registers[Vx] != chip8->registers[Vy])
-            {
-                chip8->pc += 4;
-            }
-            else
             {
                 chip8->pc += 2;
             }
