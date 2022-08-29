@@ -1,6 +1,7 @@
 # include <stdlib.h>
 # include <stdio.h>
 # include <string.h>
+# include <conio.h>
 # include "opcode.h"
 # include "randGen.h"
 # include "fonts.h"
@@ -344,30 +345,8 @@ void instruction(CHIP8* chip8, int instruction)
             // in the top of the stack.
             printf_s("Initiating OP_00EE\n");
             chip8->stack[chip8->sp] = 0;
-            // if (!chip8->sp)
-            // {
-            //     chip8->pc += 2;
-            // }
-            
-            // else
-            // {
-                --chip8->sp;
-                chip8->pc = chip8->stack[chip8->sp];
-            // }
-            
-            // else
-            // {
-            //     --chip8->sp;
-            //     chip8->pc = chip8->stack[chip8->sp];
-            //     chip8->stack[chip8->sp] = 0;
-                printf_s("Stack pointer = %d\n", chip8->sp);
-                printf_s("Print stack: ");
-                for (int i = 0; i < 16; i++)
-                {
-                    printf_s("|a[%d] = 0x%x|,", i, chip8->stack[i]);
-                }
-                printf_s("\n");
-            // }
+            --chip8->sp;
+            chip8->pc = chip8->stack[chip8->sp];
             break;
         }
 
@@ -405,13 +384,6 @@ void instruction(CHIP8* chip8, int instruction)
             chip8->stack[chip8->sp] = NNN;
             ++chip8->sp;
             chip8->pc = NNN;
-            printf_s("Stack pointer = %d\n", chip8->sp);
-            printf_s("Print stack: ");
-            for (int i = 0; i < 16; i++)
-            {
-                printf_s("|a[%d] = 0x%x|,", i, chip8->stack[i]);
-            }
-            printf_s("\n");
             break;
         }
 
@@ -697,14 +669,41 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_EX9E:
         {
+            // Skip one instruction (increment PC by 2) if the key
+            // corresponding to the value in Vx is pressed.
             printf_s("Initiating OP_EX9E\n");
-
+            unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
+            if(chip8->is_kbhit)
+            {
+                for (int i = 0; i < KEYS; i++)
+                {
+                    if (chip8->active_keys[i])
+                    {
+                        chip8->pc += 2;
+                    }
+                }
+            }
+            chip8->pc += 2;
             break;
         }
 
         case OP_EXA1:
         {
+            // Skip one instruction (increment PC by 2) if the key
+            // corresponding to the value in Vx is *not* pressed.
             printf_s("Initiating OP_EXA1\n");
+            unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
+            if(!chip8->is_kbhit)
+            {
+                for (int i = 0; i < KEYS; i++)
+                {
+                    if (chip8->active_keys[i])
+                    {
+                        chip8->pc += 2;
+                    }
+                }
+            }
+            chip8->pc += 2;
             break;
         }
 
@@ -726,22 +725,40 @@ void instruction(CHIP8* chip8, int instruction)
             // be put in VX and execution continues. Timers still work at BG.
             printf_s("Initiating OP_FX0A\n");
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
-            unsigned char input = 0;
-            scanf(&input);
-            chip8->registers[Vx] = input;
+            while(!chip8->is_kbhit)
+            {
+                continue;
+            }
+            
+            for (int i = 0; i < KEYS; i++)
+            {
+                if (chip8->active_keys[i])
+                {
+                    chip8->registers[Vx] = i;
+                }
+            }
+
             chip8->pc += 2;
             break;
         }
 
         case OP_FX15:
         {
+            // Sets the delay timer to the value in Vx.
             printf_s("Initiating OP_FX15\n");
+            unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
+            chip8->delay_timer = chip8->registers[Vx];
+            chip8->pc += 2;
             break;
         }
 
         case OP_FX18:
         {
+            // Sets the sound timer to the value in Vx.
             printf_s("Initiating OP_FX18\n");
+            unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
+            chip8->sound_timer = chip8->registers[Vx];
+            chip8->pc += 2;
             break;
         }
 
