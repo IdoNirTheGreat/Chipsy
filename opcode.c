@@ -18,7 +18,7 @@ void det_opcode(CHIP8* chip8)
         {
             switch (chip8->opcode)
             {
-                case 0x00e0u:
+                case 0x00E0u:
                 {
                     instruction(chip8, OP_00E0);
                     break;
@@ -91,7 +91,6 @@ void det_opcode(CHIP8* chip8)
                 {
                     instruction(chip8, OP_8XY0);
                     break;
-
                 }
 
                 case 0x1:
@@ -185,7 +184,7 @@ void det_opcode(CHIP8* chip8)
 
         case 0xE:
         {
-            unsigned char thrd_bt = (chip8->opcode & 0x000Fu) >> 4;
+            unsigned char thrd_bt = (chip8->opcode & 0x00F0u) >> 4;
             switch (thrd_bt)
             {
                 case 0x9:
@@ -332,8 +331,6 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Clearing screen...\n");
             memset(chip8->monitor, 0, sizeof(chip8->monitor[0]));
             chip8->pc += 2;
-            printf_s("PC at 0x%x\n", chip8->pc);
-            printf_s("opcode: 0x%x\n", chip8->opcode);
             break;
         }
 
@@ -679,6 +676,7 @@ void instruction(CHIP8* chip8, int instruction)
                 {
                     if (chip8->active_keys[i])
                     {
+                        printf_s("%x is pressed.\n", i);
                         chip8->pc += 2;
                     }
                 }
@@ -699,6 +697,7 @@ void instruction(CHIP8* chip8, int instruction)
                 {
                     if (chip8->active_keys[i])
                     {
+                        printf_s("%x is released.\n", i);
                         chip8->pc += 2;
                     }
                 }
@@ -725,20 +724,19 @@ void instruction(CHIP8* chip8, int instruction)
             // be put in VX and execution continues. Timers still work at BG.
             printf_s("Initiating OP_FX0A\n");
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
-            while(!chip8->is_kbhit)
-            {
-                continue;
-            }
             
-            for (int i = 0; i < KEYS; i++)
+            if (chip8->is_kbhit)
             {
-                if (chip8->active_keys[i])
+                for (int i = 0; i < KEYS; i++)
                 {
-                    chip8->registers[Vx] = i;
+                    if (chip8->active_keys[i])
+                    {
+                        chip8->registers[Vx] = i;
+                        chip8->pc += 2;
+                    }
                 }
             }
-
-            chip8->pc += 2;
+            
             break;
         }
 
@@ -748,6 +746,7 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_FX15\n");
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             chip8->delay_timer = chip8->registers[Vx];
+            printf_s("***Delay timer has changed: %d***\n", chip8->delay_timer);
             chip8->pc += 2;
             break;
         }
@@ -791,11 +790,9 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_FX33\n");
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned char value = chip8->registers[Vx];
-            printf_s("Value in Vx: 0d%d\n", value);
             chip8->memory[chip8->index] = value / 100;
             chip8->memory[chip8->index + 1] = value / 10 - 10 * (value / 100);
             chip8->memory[chip8->index + 2] = value % 10;
-            printf_s("Values in index and two next cells: %d, %d, %d\n", chip8->memory[chip8->index], chip8->memory[chip8->index + 1], chip8->memory[chip8->index + 2]);
             chip8->pc += 2;
             break;
         }

@@ -65,4 +65,7 @@ void cycle(CHIP8* chip8)
     printf_s("Current opcode: %04x\n", chip8->opcode);
     det_opcode(chip8);
     printf_s("PC at %x\n", chip8->pc);
+    if (chip8->delay_timer > 0) --chip8->delay_timer;
+    if (chip8->sound_timer > 0) --chip8->sound_timer;
+    printf_s("Delay timer = %d, Sound timer = %d\n", chip8->delay_timer, chip8->sound_timer);
 }

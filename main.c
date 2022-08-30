@@ -9,8 +9,7 @@
 # define R_VAL 0 // Red display value
 # define G_VAL 255 // Green display value
 # define B_VAL 0 // Blue display value
-//# define FILENAME ".\\test_opcode.ch8"
-# define FILENAME ".\\Games\\MERLIN"
+# define FILENAME ".\\Games\\PONG"
 
 enum error_code
 {
@@ -250,18 +249,34 @@ void update_input(SDL_Event* event, CHIP8* chip8)
             }
         }     
     }
+
+    printf_s("Printing key values:\n");
+    for(int i = 0; i < KEYS; i++)
+    {
+        printf_s("Value of key 0x%x = %d\n", i, chip8->active_keys[i]);
+    }
 }
 
 void update_kbhit(CHIP8* chip8)
 {
+    printf_s("Printing key values:\n");
+
+    for(int i = 0; i < KEYS; i++)
+    {
+        printf_s("Value of key 0x%x = %d\n", i, chip8->active_keys[i]);
+    }
+
+    unsigned char kbhit = 0;
     for(int i = 0; i < KEYS; i++)
     {
         if(chip8->active_keys[i])
         {
-            chip8->is_kbhit = 1;
-            break;
+            kbhit = 1;
         }
     }
+
+    chip8->is_kbhit = kbhit;
+    printf_s("kbhit value: %d\n", chip8->is_kbhit);
 }
 
 int WinMain(int argc, char* args[])
@@ -286,7 +301,7 @@ int WinMain(int argc, char* args[])
 
     // Main loop:
     int running = 1;
-
+    
     SDL_Event event;
     while(running)
     {
@@ -303,33 +318,30 @@ int WinMain(int argc, char* args[])
                 else
                 {
                     // Process KB input:
-                    if(event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
-                    {
-                        update_input(&event, &chipsy);
-                        update_kbhit(&chipsy);
-                    }
+                    update_input(&event, &chipsy);
+                    //SDL_Delay(7000);
+                    update_kbhit(&chipsy);
+                    //SDL_Delay(7000);
                 }
             }
         }
 
         // Emulated CPU Cycles:
         cycle(&chipsy);
-
-        //SDL_Delay(500); // For debugging
+        if (chipsy.opcode == 0xE0u)
+            SDL_Delay(4000);
         if (chipsy.update_screen)
         { 
             update_screen(renderer, &chipsy);
             chipsy.update_screen = 0;
             SDL_Delay(MONITOR_REFRESH_INTERVAL);
-            --chipsy.delay_timer;
-            --chipsy.sound_timer;
         }
         printf_s("\n");
         
     }
 
 
-    SDL_Delay(1000);
+    //SDL_Delay(1000);
 
     // Program Termination:
     SDL_DestroyRenderer(renderer);
