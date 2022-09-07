@@ -9,7 +9,7 @@
 # define R_VAL 0 // Red display value
 # define G_VAL 255 // Green display value
 # define B_VAL 0 // Blue display value
-# define FILENAME ".\\Games\\PONG"
+# define FILENAME ".\\Games\\UFO"
 
 enum error_code
 {
@@ -250,21 +250,21 @@ void update_input(SDL_Event* event, CHIP8* chip8)
         }     
     }
 
-    printf_s("Printing key values:\n");
-    for(int i = 0; i < KEYS; i++)
-    {
-        printf_s("Value of key 0x%x = %d\n", i, chip8->active_keys[i]);
-    }
+    // printf_s("Printing key values:\n");
+    // for(int i = 0; i < KEYS; i++)
+    // {
+    //     printf_s("Value of key 0x%x = %d\n", i, chip8->active_keys[i]);
+    // }
 }
 
 void update_kbhit(CHIP8* chip8)
 {
-    printf_s("Printing key values:\n");
+    // printf_s("Printing key values:\n");
 
-    for(int i = 0; i < KEYS; i++)
-    {
-        printf_s("Value of key 0x%x = %d\n", i, chip8->active_keys[i]);
-    }
+    // for(int i = 0; i < KEYS; i++)
+    // {
+    //     printf_s("Value of key 0x%x = %d\n", i, chip8->active_keys[i]);
+    // }
 
     unsigned char kbhit = 0;
     for(int i = 0; i < KEYS; i++)
@@ -337,11 +337,9 @@ int WinMain(int argc, char* args[])
             SDL_Delay(MONITOR_REFRESH_INTERVAL);
         }
         printf_s("\n");
+        SDL_Delay(500);
         
     }
-
-
-    //SDL_Delay(1000);
 
     // Program Termination:
     SDL_DestroyRenderer(renderer);

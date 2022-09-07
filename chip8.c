@@ -45,7 +45,7 @@ void load_ROM(CHIP8* chip8, char const* filename)
 void load_fonts(CHIP8* chip8)
 {
     // Load fonts into machine memory:
-    for (unsigned int i = 0; i < FONTSET_SIZE; ++i)
+    for (unsigned int i = 0; i < FONTSET_SIZE; i++)
         chip8->memory[FONTSET_START_ADDRESS + i] = fontset[i];
     printf_s("Fonts loaded successfully.\n");
 }

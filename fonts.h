@@ -1,8 +1,8 @@
-#ifndef INC_FONTS_H
-#define INC_FONTS_H
+# ifndef INC_FONTS_H
+# define INC_FONTS_H
+# define FONTSET_START_ADDRESS 0x50
+# define FONTSET_SIZE 80
 
-extern const unsigned int FONTSET_SIZE;
-extern const unsigned int FONTSET_START_ADDRESS;
 extern unsigned char fontset[];
 
-#endif
+# endif
