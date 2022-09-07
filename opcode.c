@@ -344,6 +344,14 @@ void instruction(CHIP8* chip8, int instruction)
             chip8->stack[chip8->sp] = 0;
             --chip8->sp;
             chip8->pc = chip8->stack[chip8->sp];
+            printf_s("*** Start of Stack ***\n");
+            int i = 0;
+            for(i = 0; i < chip8->sp; i++)
+            {
+                printf_s("|(%d): 0x%x|", i, chip8->stack[i]);
+            }
+            printf_s("|(%d): 0x%x|\n", i, chip8->pc);
+            printf_s("*** End of Stack ***\n");
             break;
         }
 
@@ -378,9 +386,15 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned short NNN = chip8->opcode & 0x0FFFu;
             chip8->stack[chip8->sp] = chip8->pc + 2;
             ++chip8->sp;
-            chip8->stack[chip8->sp] = NNN;
-            ++chip8->sp;
             chip8->pc = NNN;
+            printf_s("*** Start of Stack ***\n");
+            int i = 0;
+            for(i = 0; i < chip8->sp; i++)
+            {
+                printf_s("|(%d): 0x%x|", i, chip8->stack[i]);
+            }
+            printf_s("|(%d): 0x%x|\n", i, chip8->pc);
+            printf_s("*** End of Stack ***\n");
             break;
         }
 
@@ -595,7 +609,6 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_ANNN\n");
             unsigned short NNN = (chip8->opcode & 0x0FFFu);
             chip8->index = NNN;
-            
             chip8->pc += 2;
             break;
         }
@@ -643,7 +656,7 @@ void instruction(CHIP8* chip8, int instruction)
             for (int row = 0; row < N; row++)
             {
                 unsigned char sprite_byte = chip8->memory[chip8->index + row];
-                printf("current sprite byte: %x\n", sprite_byte);
+                printf_s("sprite byte = %x\n", sprite_byte);
                 for (int bit = 0; bit < 8; ++bit)
                 {
                     unsigned char sprite_pixel = sprite_byte & (0x80u >> bit);
@@ -779,8 +792,7 @@ void instruction(CHIP8* chip8, int instruction)
             // the hexadecimal character in VX.
             printf_s("Initiating OP_FX29\n");
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
-            chip8->index = FONTSET_START_ADDRESS + chip8->registers[Vx];
-            printf_s("Index = 0x%x\n", chip8->index);
+            chip8->index = FONTSET_START_ADDRESS + chip8->registers[Vx] * 5; // Each character is 5 lines of pixels
             chip8->pc += 2;
             break;
         }
