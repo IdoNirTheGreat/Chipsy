@@ -5,12 +5,11 @@
 # define SCALE 14
 # define SCREEN_WIDTH 64 * SCALE
 # define SCREEN_HEIGHT 32 * SCALE
-# define MONITOR_REFRESH_INTERVAL 16 // In miliseconds (about 60 [Hz])
+# define MONITOR_REFRESH_INTERVAL 1 // In miliseconds (about 60 [Hz])
 # define R_VAL 0 // Red display value
 # define G_VAL 255 // Green display value
 # define B_VAL 0 // Blue display value
 # define FILENAME ".\\Games\\PONG" //".\\test_opcode.ch8"
-# define printf_s
 
 
 enum error_code
@@ -28,12 +27,18 @@ void update_screen(SDL_Renderer* renderer, CHIP8* chip8)
         {
             if (chip8->monitor[j][i])
             {
-                SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
                 SDL_RenderDrawPoint(renderer, i, j);
             }
-            else
-            {
-                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+        }
+    }
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    for (int i = 0; i < COLS; i++)
+    {
+        for (int j = 0; j < ROWS; j++)
+        {
+            if (!chip8->monitor[j][i])
+            {                
                 SDL_RenderDrawPoint(renderer, i, j);
             }
         }
@@ -340,10 +345,10 @@ int WinMain(int argc, char* args[])
         { 
             update_screen(renderer, &chipsy);
             chipsy.update_screen = 0;
-            SDL_Delay(MONITOR_REFRESH_INTERVAL);
-            // SDL_Delay(3000);
+            // SDL_Delay(MONITOR_REFRESH_INTERVAL);
+            // SDL_Delay(500);
         }
-        printf_s("\n");
+        // printf_s("\n");
         // SDL_Delay(1000);
         
     }
