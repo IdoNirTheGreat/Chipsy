@@ -3,6 +3,7 @@
 # include "fonts.h"
 # include "chip8.h"
 # include "opcode.h"
+# define printf_s
 
 const unsigned int START_ADDRESS = 0x0200u;
 

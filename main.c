@@ -9,7 +9,9 @@
 # define R_VAL 0 // Red display value
 # define G_VAL 255 // Green display value
 # define B_VAL 0 // Blue display value
-# define FILENAME ".\\Games\\UFO"
+# define FILENAME ".\\Games\\PONG" //".\\test_opcode.ch8"
+# define printf_s
+
 
 enum error_code
 {
@@ -26,6 +28,12 @@ void update_screen(SDL_Renderer* renderer, CHIP8* chip8)
         {
             if (chip8->monitor[j][i])
             {
+                SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+                SDL_RenderDrawPoint(renderer, i, j);
+            }
+            else
+            {
+                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
                 SDL_RenderDrawPoint(renderer, i, j);
             }
         }
@@ -276,7 +284,7 @@ void update_kbhit(CHIP8* chip8)
     }
 
     chip8->is_kbhit = kbhit;
-    printf_s("kbhit value: %d\n", chip8->is_kbhit);
+    // printf_s("kbhit value: %d\n", chip8->is_kbhit);
 }
 
 int WinMain(int argc, char* args[])
@@ -328,16 +336,15 @@ int WinMain(int argc, char* args[])
 
         // Emulated CPU Cycles:
         cycle(&chipsy);
-        if (chipsy.opcode == 0xE0u)
-            SDL_Delay(4000);
         if (chipsy.update_screen)
         { 
             update_screen(renderer, &chipsy);
             chipsy.update_screen = 0;
             SDL_Delay(MONITOR_REFRESH_INTERVAL);
+            // SDL_Delay(3000);
         }
         printf_s("\n");
-        SDL_Delay(500);
+        // SDL_Delay(1000);
         
     }
 

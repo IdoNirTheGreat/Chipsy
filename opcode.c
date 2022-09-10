@@ -5,6 +5,7 @@
 # include "opcode.h"
 # include "randGen.h"
 # include "fonts.h"
+# define printf_s
 # define COLS 64
 # define ROWS 32
 
@@ -330,6 +331,7 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_00E0\n");
             printf_s("Clearing screen...\n");
             memset(chip8->monitor, 0, sizeof(chip8->monitor[0]));
+            chip8->update_screen = 1;
             chip8->pc += 2;
             break;
         }
@@ -406,11 +408,11 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_3XNN\n");
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned char NN = chip8->opcode & 0x00FFu;
-            chip8->pc += 2;
             if (chip8->registers[Vx] == NN)
             {
                 chip8->pc += 2;
             }
+            chip8->pc += 2;
             break;
         }
 
@@ -422,11 +424,11 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_4XNN\n");
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned char NN = chip8->opcode & 0x00FFu;
-            chip8->pc += 2;
             if (chip8->registers[Vx] != NN)
             {
                 chip8->pc += 2;
             }
+            chip8->pc += 2;
             break;
         }
 
@@ -440,12 +442,9 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned char Vy = (chip8->opcode & 0x00F0u) >> 4u;
             if (chip8->registers[Vx] == chip8->registers[Vy])
             {
-                chip8->pc += 4;
-            }
-            else
-            {
                 chip8->pc += 2;
             }
+            chip8->pc += 2;
             break;
         }
 
@@ -465,7 +464,7 @@ void instruction(CHIP8* chip8, int instruction)
             // Add the value NN to Vx (no flag).
             printf_s("Initiating OP_7XNN\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
-            unsigned short NN = (chip8->opcode & 0x00FFu);
+            unsigned short NN = chip8->opcode & 0x00FFu;
             chip8->registers[Vx] += NN;
             chip8->pc += 2;
             break;
@@ -595,11 +594,11 @@ void instruction(CHIP8* chip8, int instruction)
             printf_s("Initiating OP_9XY0\n");
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned char Vy = (chip8->opcode & 0x00F0u) >> 4u;
-            chip8->pc += 2;
             if (chip8->registers[Vx] != chip8->registers[Vy])
             {
                 chip8->pc += 2;
             }
+            chip8->pc += 2;
             break;
         }
 
@@ -656,7 +655,6 @@ void instruction(CHIP8* chip8, int instruction)
             for (int row = 0; row < N; row++)
             {
                 unsigned char sprite_byte = chip8->memory[chip8->index + row];
-                printf_s("sprite byte = %x\n", sprite_byte);
                 for (int bit = 0; bit < 8; ++bit)
                 {
                     unsigned char sprite_pixel = sprite_byte & (0x80u >> bit);
@@ -685,16 +683,9 @@ void instruction(CHIP8* chip8, int instruction)
             // corresponding to the value in Vx is pressed.
             printf_s("Initiating OP_EX9E\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
-            if(chip8->is_kbhit)
+            if(chip8->active_keys[chip8->registers[Vx]])
             {
-                for (int i = 0; i < KEYS; i++)
-                {
-                    if (chip8->active_keys[i])
-                    {
-                        printf_s("%x is pressed.\n", i);
-                        chip8->pc += 2;
-                    }
-                }
+                chip8->pc += 2;
             }
             chip8->pc += 2;
             break;
@@ -706,16 +697,9 @@ void instruction(CHIP8* chip8, int instruction)
             // corresponding to the value in Vx is *not* pressed.
             printf_s("Initiating OP_EXA1\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
-            if(!chip8->is_kbhit)
+            if(!chip8->active_keys[chip8->registers[Vx]])
             {
-                for (int i = 0; i < KEYS; i++)
-                {
-                    if (chip8->active_keys[i])
-                    {
-                        printf_s("%x is released.\n", i);
-                        chip8->pc += 2;
-                    }
-                }
+                chip8->pc += 2;
             }
             chip8->pc += 2;
             break;
@@ -792,7 +776,7 @@ void instruction(CHIP8* chip8, int instruction)
             // the hexadecimal character in VX.
             printf_s("Initiating OP_FX29\n");
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
-            chip8->index = FONTSET_START_ADDRESS + chip8->registers[Vx] * 5; // Each character is 5 lines of pixels
+            chip8->index = FONTSET_START_ADDRESS + chip8->registers[Vx] * 5; // Each character is 5 sprite bytes
             chip8->pc += 2;
             break;
         }
