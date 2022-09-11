@@ -9,7 +9,7 @@
 # define R_VAL 0 // Red display value
 # define G_VAL 255 // Green display value
 # define B_VAL 0 // Blue display value
-# define FILENAME ".\\Games\\PONG" //".\\test_opcode.ch8"
+# define FILENAME ".\\Games\\UFO" //".\\test_opcode.ch8"
 
 
 enum error_code
@@ -346,10 +346,23 @@ int WinMain(int argc, char* args[])
             update_screen(renderer, &chipsy);
             chipsy.update_screen = 0;
             // SDL_Delay(MONITOR_REFRESH_INTERVAL);
-            // SDL_Delay(500);
         }
-        // printf_s("\n");
-        // SDL_Delay(1000);
+        
+        // if (chipsy.pc >= 0x220)
+        // {
+        //     printf_s("Vf = %d\n", chipsy.registers[0xF]);
+        //     SDL_Delay(50);
+        // }
+
+        // if (chipsy.opcode == 0x3f01u)
+        // {
+        //     chipsy.flag = 1;
+        //     printf_s("Vf = %x\n", chipsy.registers[0xF]);
+        //     SDL_Delay(4000);
+        // }
+        // // printf_s("\n");
+        // if(chipsy.flag)
+        //     SDL_Delay(100);
         
     }
 
