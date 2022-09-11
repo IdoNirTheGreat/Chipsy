@@ -662,7 +662,6 @@ void instruction(CHIP8* chip8, int instruction)
                     {
                         if(chip8->monitor[Y + row][X + bit])
                         {
-                            chip8->flag = 1;
                             chip8->registers[0xF] = 1;
                         }
                         chip8->monitor[Y + row][X + bit] ^= 0x1;

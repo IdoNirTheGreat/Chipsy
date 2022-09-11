@@ -5,11 +5,11 @@
 # define SCALE 14
 # define SCREEN_WIDTH 64 * SCALE
 # define SCREEN_HEIGHT 32 * SCALE
-# define MONITOR_REFRESH_INTERVAL 1 // In miliseconds (about 60 [Hz])
+# define MONITOR_REFRESH_INTERVAL 16 // In miliseconds (about 60 [Hz])
 # define R_VAL 0 // Red display value
 # define G_VAL 255 // Green display value
 # define B_VAL 0 // Blue display value
-# define FILENAME ".\\Games\\UFO" //".\\test_opcode.ch8"
+# define FILENAME ".\\Games\\WIPEOFF" //".\\test_opcode.ch8"
 
 
 enum error_code
@@ -345,7 +345,7 @@ int WinMain(int argc, char* args[])
         { 
             update_screen(renderer, &chipsy);
             chipsy.update_screen = 0;
-            // SDL_Delay(MONITOR_REFRESH_INTERVAL);
+            SDL_Delay(MONITOR_REFRESH_INTERVAL);
         }
         
         // if (chipsy.pc >= 0x220)
