@@ -9,7 +9,7 @@
 # define R_VAL 0 // Red display value
 # define G_VAL 255 // Green display value
 # define B_VAL 0 // Blue display value
-# define FILENAME ".\\Games\\WIPEOFF" //".\\test_opcode.ch8"
+# define FILENAME ".\\Intro_logo.ch8"
 
 
 enum error_code
@@ -20,6 +20,7 @@ enum error_code
 
 void update_screen(SDL_Renderer* renderer, CHIP8* chip8)
 {
+    // Draw "on" pixels:
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
     for (int i = 0; i < COLS; i++)
     {
@@ -32,6 +33,7 @@ void update_screen(SDL_Renderer* renderer, CHIP8* chip8)
         }
     }
 
+    // Draw "off" pixels:
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     for (int i = 0; i < COLS; i++)
     {
@@ -272,13 +274,6 @@ void update_input(SDL_Event* event, CHIP8* chip8)
 
 void update_kbhit(CHIP8* chip8)
 {
-    // printf_s("Printing key values:\n");
-
-    // for(int i = 0; i < KEYS; i++)
-    // {
-    //     printf_s("Value of key 0x%x = %d\n", i, chip8->active_keys[i]);
-    // }
-
     unsigned char kbhit = 0;
     for(int i = 0; i < KEYS; i++)
     {
@@ -289,7 +284,6 @@ void update_kbhit(CHIP8* chip8)
     }
 
     chip8->is_kbhit = kbhit;
-    // printf_s("kbhit value: %d\n", chip8->is_kbhit);
 }
 
 int WinMain(int argc, char* args[])
@@ -332,9 +326,7 @@ int WinMain(int argc, char* args[])
                 {
                     // Process KB input:
                     update_input(&event, &chipsy);
-                    //SDL_Delay(7000);
                     update_kbhit(&chipsy);
-                    //SDL_Delay(7000);
                 }
             }
         }
@@ -347,22 +339,6 @@ int WinMain(int argc, char* args[])
             chipsy.update_screen = 0;
             SDL_Delay(MONITOR_REFRESH_INTERVAL);
         }
-        
-        // if (chipsy.pc >= 0x220)
-        // {
-        //     printf_s("Vf = %d\n", chipsy.registers[0xF]);
-        //     SDL_Delay(50);
-        // }
-
-        // if (chipsy.opcode == 0x3f01u)
-        // {
-        //     chipsy.flag = 1;
-        //     printf_s("Vf = %x\n", chipsy.registers[0xF]);
-        //     SDL_Delay(4000);
-        // }
-        // // printf_s("\n");
-        // if(chipsy.flag)
-        //     SDL_Delay(100);
         
     }
 
