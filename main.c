@@ -9,7 +9,7 @@
 # define R_VAL 0 // Red display value
 # define G_VAL 255 // Green display value
 # define B_VAL 0 // Blue display value
-# define FILENAME ".\\Intro_logo.ch8"
+# define FILENAME ".\\Games\\TETRIS"//".\\Intro_logo.ch8"
 
 
 enum error_code
@@ -20,27 +20,29 @@ enum error_code
 
 void update_screen(SDL_Renderer* renderer, CHIP8* chip8)
 {
-    // Draw "on" pixels:
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    int color = 0;
+
     for (int i = 0; i < COLS; i++)
     {
         for (int j = 0; j < ROWS; j++)
         {
-            if (chip8->monitor[j][i])
+            if (chip8->monitor[j][i]) // Pixel is on:
             {
+                if (!color)
+                {
+                    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+                    color = 1;
+                }
                 SDL_RenderDrawPoint(renderer, i, j);
             }
-        }
-    }
 
-    // Draw "off" pixels:
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-    for (int i = 0; i < COLS; i++)
-    {
-        for (int j = 0; j < ROWS; j++)
-        {
-            if (!chip8->monitor[j][i])
-            {                
+            else // Pixel is off:
+            {
+                if (color)
+                {
+                    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+                    color = 0;
+                }
                 SDL_RenderDrawPoint(renderer, i, j);
             }
         }
