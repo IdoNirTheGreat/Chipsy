@@ -11,7 +11,6 @@
 # define B_VAL 0 // Blue display value
 # define FILENAME ".\\Games\\PONG" //".\\c8_test.c8" //".\\Intro_logo.ch8"
 
-
 enum error_code
 {
     SDL_FAILED,
@@ -290,7 +289,7 @@ void update_kbhit(CHIP8* chip8)
     chip8->is_kbhit = kbhit;
 }
 
-int WinMain(int argc, char* args[])
+int main(int argc, char* argv[])
 {
     // SDL Setup:
     SDL_Window* window = SDL_CreateWindow("Chipsy - The Best CHIP-8 Emulator!",
@@ -308,11 +307,11 @@ int WinMain(int argc, char* args[])
 
     // CHIP-8 Setup:
     CHIP8 chipsy = {};
-    init_chip8(&chipsy, FILENAME);
+    if (argc > 1) init_chip8(&chipsy, argv[1]);
+    else init_chip8(&chipsy, FILENAME);
 
     // Main loop:
     int running = 1;
-    
     SDL_Event event;
     while(running)
     {
