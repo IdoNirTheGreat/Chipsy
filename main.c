@@ -5,7 +5,7 @@
 # define SCALE 14
 # define SCREEN_WIDTH 64 * SCALE
 # define SCREEN_HEIGHT 32 * SCALE
-# define MONITOR_REFRESH_INTERVAL 1 // In miliseconds (about 60 [Hz])
+# define MONITOR_REFRESH_INTERVAL 16u // In miliseconds (about 60 [Hz])
 # define R_VAL 0 // Red display value
 # define G_VAL 255 // Green display value
 # define B_VAL 0 // Blue display value
@@ -18,9 +18,10 @@ enum error_code
     GUI_FAILED,
 };
 
-void update_screen(SDL_Renderer* renderer, CHIP8* chip8)
+unsigned int update_screen(SDL_Renderer* renderer, CHIP8* chip8)
 {
     int color = 0;
+    unsigned int delay = SDL_GetTicks();
 
     for (int i = 0; i < COLS; i++)
     {
@@ -49,6 +50,7 @@ void update_screen(SDL_Renderer* renderer, CHIP8* chip8)
     }
 
     SDL_RenderPresent(renderer);
+    return delay;
 }
 
 void update_input(SDL_Event* event, CHIP8* chip8)
@@ -337,9 +339,9 @@ int WinMain(int argc, char* args[])
         cycle(&chipsy);
         if (chipsy.update_screen)
         { 
-            update_screen(renderer, &chipsy);
+            unsigned int delay = update_screen(renderer, &chipsy);
             chipsy.update_screen = 0;
-            SDL_Delay(MONITOR_REFRESH_INTERVAL);
+            if (MONITOR_REFRESH_INTERVAL > delay) SDL_Delay(MONITOR_REFRESH_INTERVAL- delay);
         }
     }
 
