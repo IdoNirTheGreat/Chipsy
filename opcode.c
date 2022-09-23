@@ -524,9 +524,9 @@ void instruction(CHIP8* chip8, int instruction)
             // printf_s("Initiating OP_8XY4\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
+            if (chip8->registers[Vx] + chip8->registers[Vy] > 0xFF) chip8->registers[0xF] = 1;
+            else chip8->registers[0xF] = 0;
             chip8->registers[Vx] += chip8->registers[Vy];
-            if (chip8->registers[Vx] > 0x00FF) chip8->registers[0x000F] = 0x0001;
-            else chip8->registers[0x000F] = 0x0000;
             chip8->pc += 2;
             break;
         }
@@ -537,6 +537,8 @@ void instruction(CHIP8* chip8, int instruction)
             // printf_s("Initiating OP_8XY5\n");
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
+            if ((int)chip8->registers[Vx] - chip8->registers[Vy] < 0) chip8->registers[0xF] = 0;
+            else chip8->registers[0xF] = 1;
             chip8->registers[Vx] -= chip8->registers[Vy];
             chip8->pc += 2;
             break;
@@ -648,7 +650,7 @@ void instruction(CHIP8* chip8, int instruction)
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             unsigned char X = chip8->registers[Vx] & 0x3Fu;
             unsigned char Y = chip8->registers[Vy] & 0x1Fu;
-            chip8->registers[0xFu] = 0x0u;
+            chip8->registers[0xFu] = 0;
             unsigned char N = chip8->opcode & 0xFu;
             
             for (int row = 0; row < N; row++)
@@ -664,7 +666,7 @@ void instruction(CHIP8* chip8, int instruction)
                         {
                             chip8->registers[0xF] = 1;
                         }
-                        chip8->monitor[Y + row][X + bit] ^= 0x1;
+                        chip8->monitor[Y + row][X + bit] ^= 1;
                     }
 
                     // if(chip8->flag)

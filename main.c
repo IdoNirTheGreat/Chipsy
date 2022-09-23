@@ -5,11 +5,11 @@
 # define SCALE 14
 # define SCREEN_WIDTH 64 * SCALE
 # define SCREEN_HEIGHT 32 * SCALE
-# define MONITOR_REFRESH_INTERVAL 16 // In miliseconds (about 60 [Hz])
+# define MONITOR_REFRESH_INTERVAL 1 // In miliseconds (about 60 [Hz])
 # define R_VAL 0 // Red display value
 # define G_VAL 255 // Green display value
 # define B_VAL 0 // Blue display value
-# define FILENAME ".\\Games\\TETRIS"//".\\Intro_logo.ch8"
+# define FILENAME ".\\Games\\PONG" //".\\c8_test.c8" //".\\Intro_logo.ch8"
 
 
 enum error_code
@@ -341,7 +341,6 @@ int WinMain(int argc, char* args[])
             chipsy.update_screen = 0;
             SDL_Delay(MONITOR_REFRESH_INTERVAL);
         }
-        
     }
 
     // Program Termination:
