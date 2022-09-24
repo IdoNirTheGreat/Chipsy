@@ -3,7 +3,7 @@
 
 # include "chip8.h"
 
-enum OPCODE
+enum OPCODE /* Enums of all opcodes. */
 {
     OP_00E0,
     OP_00EE,
@@ -42,13 +42,20 @@ enum OPCODE
     OP_FX65,
 };
 
-enum ERROR
+enum ERROR /* Enums of all instruction related errors. */
 {
-    DET_OPCODE_ERROR,
+    DECODE_OPCODE_ERROR,
 };
 
-void det_opcode(CHIP8* chip8); /** Determine which opcode needs to be executed.*/
+void decode(CHIP8* chip8); /*
+                            * Determine which opcode needs to
+                            * be executed.
+                            */
 
-void instruction(CHIP8* chip8, int instruction); /** The function that executes all CPU instructions.*/
+void execute(CHIP8* chip8, int opcode); /*
+                                         * The function that 
+                                         * executes all CPU 
+                                         * instructions.
+                                         */
 
 # endif
