@@ -1,15 +1,16 @@
+# include <stdio.h>
 # include "chip8.h"
 # include "SDL/include/SDL2/SDL.h"
-# include <stdio.h>
 
 # define SCALE 14
 # define SCREEN_WIDTH 64 * SCALE
 # define SCREEN_HEIGHT 32 * SCALE
-# define MONITOR_REFRESH_INTERVAL 16u // In miliseconds (about 60 [Hz])
+# define MONITOR_REFRESH_INTERVAL 16u // 60 [Hz]
 # define R_VAL 0 // Red display value
 # define G_VAL 255 // Green display value
 # define B_VAL 0 // Blue display value
-# define FILENAME ".\\Games\\PONG" //".\\c8_test.c8" //".\\Intro_logo.ch8"
+# define A_VAL 255 // Alpha value
+# define FILENAME ".\\Games\\Intro_logo.ch8"
 
 enum error_code
 {
@@ -30,7 +31,12 @@ unsigned int update_screen(SDL_Renderer* renderer, CHIP8* chip8)
             {
                 if (!color)
                 {
-                    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+                    SDL_SetRenderDrawColor(
+                                            renderer,
+                                            R_VAL,
+                                            G_VAL, 
+                                            B_VAL, 
+                                            A_VAL);
                     color = 1;
                 }
                 SDL_RenderDrawPoint(renderer, i, j);
@@ -40,7 +46,12 @@ unsigned int update_screen(SDL_Renderer* renderer, CHIP8* chip8)
             {
                 if (color)
                 {
-                    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+                    SDL_SetRenderDrawColor(
+                                            renderer,
+                                            0,
+                                            0,
+                                            0, 
+                                            0);
                     color = 0;
                 }
                 SDL_RenderDrawPoint(renderer, i, j);
@@ -54,6 +65,7 @@ unsigned int update_screen(SDL_Renderer* renderer, CHIP8* chip8)
 
 void update_input(SDL_Event* event, CHIP8* chip8)
 {
+    // Press Key Event:
     if(event->type == SDL_KEYDOWN)
     {
         switch(event->key.keysym.sym)
@@ -161,6 +173,7 @@ void update_input(SDL_Event* event, CHIP8* chip8)
         }     
     }
 
+    // Release Key Event:
     if(event->type == SDL_KEYUP)
     {
         switch(event->key.keysym.sym)
@@ -267,12 +280,6 @@ void update_input(SDL_Event* event, CHIP8* chip8)
             }
         }     
     }
-
-    // printf_s("Printing key values:\n");
-    // for(int i = 0; i < KEYS; i++)
-    // {
-    //     printf_s("Value of key 0x%x = %d\n", i, chip8->active_keys[i]);
-    // }
 }
 
 void update_kbhit(CHIP8* chip8)
@@ -292,15 +299,18 @@ void update_kbhit(CHIP8* chip8)
 int main(int argc, char* argv[])
 {
     // SDL Setup:
-    SDL_Window* window = SDL_CreateWindow("Chipsy - The Best CHIP-8 Emulator!",
-                                         SDL_WINDOWPOS_UNDEFINED,
-                                         SDL_WINDOWPOS_UNDEFINED, 
-                                         SCREEN_WIDTH, SCREEN_HEIGHT, 
-                                         SDL_WINDOW_OPENGL);
+    SDL_Window* window = SDL_CreateWindow(
+                        "Chipsy - The Best CHIP-8 Emulator!",
+                        SDL_WINDOWPOS_UNDEFINED,
+                        SDL_WINDOWPOS_UNDEFINED, 
+                        SCREEN_WIDTH, SCREEN_HEIGHT, 
+                        SDL_WINDOW_OPENGL);
 
-    SDL_Renderer* renderer = SDL_CreateRenderer(window,
-                                                -1,
-                                                SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    SDL_Renderer* renderer = SDL_CreateRenderer(
+                            window,
+                            -1,
+                            SDL_RENDERER_ACCELERATED |
+                            SDL_RENDERER_PRESENTVSYNC);
 
     if(!SDL_RenderSetScale(renderer, SCALE, SCALE))
         printf_s("%s\n", SDL_GetError());
@@ -315,10 +325,11 @@ int main(int argc, char* argv[])
     SDL_Event event;
     while(running)
     {
-        // Process events
+        // Process Key Events:
         while(SDL_PollEvent(&event))
         {
-            if(event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
+            if  (event.type == SDL_KEYDOWN || 
+                event.type == SDL_KEYUP)
             {
                 if(event.key.keysym.sym == SDLK_ESCAPE)
                 {
@@ -338,9 +349,14 @@ int main(int argc, char* argv[])
         cycle(&chipsy);
         if (chipsy.update_screen)
         { 
-            unsigned int delay = update_screen(renderer, &chipsy);
+            unsigned int delay = update_screen(
+                                                renderer,
+                                                &chipsy);
             chipsy.update_screen = 0;
-            if (MONITOR_REFRESH_INTERVAL > delay) SDL_Delay(MONITOR_REFRESH_INTERVAL- delay);
+            if (MONITOR_REFRESH_INTERVAL > delay)
+            {
+                SDL_Delay(MONITOR_REFRESH_INTERVAL- delay);
+            } 
         }
     }
 
