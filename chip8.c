@@ -36,9 +36,7 @@ void load_ROM(CHIP8* chip8, char const* filename)
     }
 
     else
-    {
         printf_s("ROM loading has failed.\n");
-    }
     
 }
 
@@ -56,16 +54,13 @@ void init_chip8(CHIP8* chip8, char const* rom)
     load_fonts(chip8);
     chip8->pc = START_ADDRESS;
     chip8->update_screen = 0;
-    // printf_s("PC at 0x%x\n", chip8->pc);
 }
 
 void cycle(CHIP8* chip8)
 {
-    chip8->opcode = (chip8->memory[chip8->pc] << 8u) + chip8->memory[chip8->pc + 1];
-    // printf_s("Current opcode: %04x\n", chip8->opcode);
-    det_opcode(chip8);
-    // printf_s("PC at %x\n", chip8->pc);
+    chip8->opcode = (chip8->memory[chip8->pc] << 8u) + 
+                                chip8->memory[chip8->pc + 1];
+    decode(chip8);
     if (chip8->delay_timer > 0) --chip8->delay_timer;
     if (chip8->sound_timer > 0) --chip8->sound_timer;
-    // printf_s("Delay timer = %d, Sound timer = %d\n", chip8->delay_timer, chip8->sound_timer);
 }
