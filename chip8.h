@@ -25,7 +25,12 @@ typedef struct CHIP8    /*
                                      * bytes.
                                      */
 
-    unsigned short index;           /* The index pointer. */
+    unsigned short index;           /*
+                                     * The index pointer.
+                                     * Sometimes mentioned as
+                                     * 'I'.
+                                     */
+                                    
     unsigned short pc;              /* The program counter. */
 
     unsigned short stack[16];       /* 

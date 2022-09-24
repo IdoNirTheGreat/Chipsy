@@ -4,6 +4,7 @@
 # include "opcode.h"
 # include "randGen.h"
 # include "fonts.h"
+
 # define COLS 64
 # define ROWS 32
 
@@ -18,20 +19,22 @@ void decode(CHIP8* chip8)
             {
                 case 0x00E0u:
                 {
-                    instruction(chip8, OP_00E0);
+                    execute(chip8, OP_00E0);
                     break;
                 }
 
                 case 0x00EEu:
                 {
-                    instruction(chip8, OP_00EE);
+                    execute(chip8, OP_00EE);
                     break;
                 }
 
                 default:
                 {
-                    printf_s("Opcode determination function has failed!\n");
-                    exit(DET_OPCODE_ERROR);
+                    printf_s("There seems to be an error \
+                            with determining the opcode. \
+                            Opcode = 0x%x\n", chip8->opcode);
+                    exit(DECODE_OPCODE_ERROR);
                     break;
                 }
             }
@@ -41,43 +44,43 @@ void decode(CHIP8* chip8)
 
         case 0x1:
         {
-            instruction(chip8, OP_1NNN);
+            execute(chip8, OP_1NNN);
             break;
         }
 
         case 0x2:
         {
-            instruction(chip8, OP_2NNN);
+            execute(chip8, OP_2NNN);
             break;
         }
 
         case 0x3:
         {
-            instruction(chip8, OP_3XNN);
+            execute(chip8, OP_3XNN);
             break;
         }
 
         case 0x4:
         {
-            instruction(chip8, OP_4XNN);
+            execute(chip8, OP_4XNN);
             break;
         }
 
         case 0x5:
         {
-            instruction(chip8, OP_5XY0);
+            execute(chip8, OP_5XY0);
             break;
         }
 
         case 0x6:
         {
-            instruction(chip8, OP_6XNN);
+            execute(chip8, OP_6XNN);
             break;
         }
 
         case 0x7:
         {
-            instruction(chip8, OP_7XNN);
+            execute(chip8, OP_7XNN);
             break;
         }
 
@@ -88,62 +91,64 @@ void decode(CHIP8* chip8)
             {
                 case 0x0:
                 {
-                    instruction(chip8, OP_8XY0);
+                    execute(chip8, OP_8XY0);
                     break;
                 }
 
                 case 0x1:
                 {
-                    instruction(chip8, OP_8XY1);
+                    execute(chip8, OP_8XY1);
                     break;
                 }
 
                 case 0x2:
                 {
-                    instruction(chip8, OP_8XY2);
+                    execute(chip8, OP_8XY2);
                     break;
                 }
 
                 case 0x3:
                 {
-                    instruction(chip8, OP_8XY3);
+                    execute(chip8, OP_8XY3);
                     break;
                 }
 
                 case 0x4:
                 {
-                    instruction(chip8, OP_8XY4);
+                    execute(chip8, OP_8XY4);
                     break;
                 }
 
                 case 0x5:
                 {
-                    instruction(chip8, OP_8XY5);
+                    execute(chip8, OP_8XY5);
                     break;
                 }
 
                 case 0x6:
                 {
-                    instruction(chip8, OP_8XY6);
+                    execute(chip8, OP_8XY6);
                     break;
                 }
 
                 case 0x7:
                 {
-                    instruction(chip8, OP_8XY7);
+                    execute(chip8, OP_8XY7);
                     break;
                 }
 
                 case 0xE:
                 {
-                    instruction(chip8, OP_8XYE);
+                    execute(chip8, OP_8XYE);
                     break;
                 }
 
                 default:
                 {
-                    printf_s("Opcode determination function has failed!\n");
-                    exit(DET_OPCODE_ERROR);
+                    printf_s("There seems to be an error \
+                            with determining the opcode. \
+                            Opcode = 0x%x\n", chip8->opcode);
+                    exit(DECODE_OPCODE_ERROR);
                     break;
                 }
             }
@@ -153,31 +158,31 @@ void decode(CHIP8* chip8)
 
         case 0x9:
         {
-            instruction(chip8, OP_9XY0);
+            execute(chip8, OP_9XY0);
             break;
         }
 
         case 0xA:
         {
-            instruction(chip8, OP_ANNN);
+            execute(chip8, OP_ANNN);
             break;
         }
 
         case 0xB:
         {
-            instruction(chip8, OP_BNNN);
+            execute(chip8, OP_BNNN);
             break;
         }
 
         case 0xC:
         {
-            instruction(chip8, OP_CXNN);
+            execute(chip8, OP_CXNN);
             break;
         }
 
         case 0xD:
         {
-            instruction(chip8, OP_DXYN);
+            execute(chip8, OP_DXYN);
             break;
         }
 
@@ -188,20 +193,22 @@ void decode(CHIP8* chip8)
             {
                 case 0x9:
                 {
-                    instruction(chip8, OP_EX9E);
+                    execute(chip8, OP_EX9E);
                     break;
                 }
 
                 case 0xA:
                 {
-                    instruction(chip8, OP_EXA1);
+                    execute(chip8, OP_EXA1);
                     break;
                 }
 
                 default:
                 {
-                    printf_s("There seems to be an error with determining the opcode.\n");
-                    exit(DET_OPCODE_ERROR);
+                    printf_s("There seems to be an error \
+                            with decoding the opcode. \
+                            Opcode = 0x%x\n", chip8->opcode);
+                    exit(DECODE_OPCODE_ERROR);
                     break;
                 }
             }
@@ -221,20 +228,23 @@ void decode(CHIP8* chip8)
                     {
                         case 0x7:
                         {
-                            instruction(chip8, OP_FX07);
+                            execute(chip8, OP_FX07);
                             break;
                         }
 
                         case 0xA:
                         {
-                            instruction(chip8, OP_FX0A);
+                            execute(chip8, OP_FX0A);
                             break;
                         }
 
                         default:
                         {
-                            printf_s("There seems to be an error with determining the opcode.\n");
-                            exit(DET_OPCODE_ERROR);
+                            printf_s("There seems to be an \
+                            error with decoding the \
+                            opcode. Opcode = 0x%x\n", 
+                            chip8->opcode);
+                            exit(DECODE_OPCODE_ERROR);
                             break;
                         }
                     }
@@ -249,26 +259,29 @@ void decode(CHIP8* chip8)
                     {
                         case 0x5:
                         {
-                            instruction(chip8, OP_FX15);
+                            execute(chip8, OP_FX15);
                             break;
                         }
 
                         case 0x8:
                         {
-                            instruction(chip8, OP_FX18);
+                            execute(chip8, OP_FX18);
                             break;
                         }
 
                         case 0xE:
                         {
-                            instruction(chip8, OP_FX1E);
+                            execute(chip8, OP_FX1E);
                             break;
                         }
 
                         default:
                         {
-                            printf_s("There seems to be an error with determining the opcode.\n");
-                            exit(DET_OPCODE_ERROR);
+                            printf_s("There seems to be an \
+                            error with decoding the \
+                            opcode. Opcode = 0x%x\n",
+                            chip8->opcode);
+                            exit(DECODE_OPCODE_ERROR);
                             break;
                         }
 
@@ -279,32 +292,34 @@ void decode(CHIP8* chip8)
 
                 case 0x2:
                 {
-                    instruction(chip8, OP_FX29);
+                    execute(chip8, OP_FX29);
                     break;
                 }
 
                 case 0x3:
                 {
-                    instruction(chip8, OP_FX33);
+                    execute(chip8, OP_FX33);
                     break;
                 }
 
                 case 0x5:
                 {
-                    instruction(chip8, OP_FX55);
+                    execute(chip8, OP_FX55);
                     break;
                 }
 
                 case 0x6:
                 {
-                    instruction(chip8, OP_FX65);
+                    execute(chip8, OP_FX65);
                     break;
                 }
 
                 default:
                 {
-                    printf_s("There seems to be an error with determining the opcode.\n");
-                    exit(DET_OPCODE_ERROR);
+                    printf_s("There seems to be an error \
+                            with decoding the opcode. \
+                            Opcode = 0x%x\n", chip8->opcode);
+                    exit(DECODE_OPCODE_ERROR);
                     break;
                 }
             }
@@ -313,19 +328,23 @@ void decode(CHIP8* chip8)
 
         default:
         {
-            printf_s("There seems to be an error with determining the opcode.\n");
-            exit(DET_OPCODE_ERROR);
+            printf_s("There seems to be an error \
+                            with decoding the opcode. \
+                            Opcode = 0x%x\n", chip8->opcode);
+            exit(DECODE_OPCODE_ERROR);
             break;
         }
     }
 }
 
-void instruction(CHIP8* chip8, int instruction)
+void execute(CHIP8* chip8, int opcode)
 {
-    switch (instruction)
+    switch (opcode)
     {
         case OP_00E0:
-        {
+        {   /*
+             * This instruction clears the CHIP-8's screen.
+             */
             memset(chip8->monitor, 0, sizeof(chip8->monitor[0]));
             chip8->update_screen = 1;
             chip8->pc += 2;
@@ -333,11 +352,12 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_00EE:
-        {
-            // This instruction finishes the subroutine in the
-            // top of the stack: it pops the subroutine out of
-            // the stack, and sets the pc to the new subroutine
-            // in the top of the stack.
+        {   /*
+             * This instruction finishes the subroutine in 
+             * the top of the stack: it pops the subroutine 
+             * out of the stack, and sets the pc to the new 
+             * subroutine in the top of the stack.
+             */
             chip8->stack[chip8->sp] = 0;
             --chip8->sp;
             chip8->pc = chip8->stack[chip8->sp];
@@ -345,23 +365,26 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_1NNN:
-        {
-            // This instruction should simply set PC to NNN,
-            // causing the program to jump to that memory location.
-            // Do not increment the PC afterwards, it jumps directly there.
+        {   /*
+             * This instruction should simply set PC to NNN, 
+             * causing the program to jump to that memory 
+             * location. Do not increment the PC afterwards, 
+             * it jumps directly there.
+             */
             unsigned short NNN = chip8->opcode & 0x0FFFu;
             chip8->pc = NNN;
             break;
         }
 
         case OP_2NNN:
-        {
-            // This instruction calls the subroutine in NNN:
-            // Instead of jumping like in 1NNN, it pushes the
-            // subroutine to the stack, and sets the pc to the 
-            // new subroutine. Note that it should first push the
-            // next-to-current PC first so it can return to the current 
-            // place later.
+        {   /*
+             * This instruction calls the subroutine in NNN: 
+             * Instead of jumping like in 1NNN, it pushes the
+             * subroutine to the stack, and sets the pc to 
+             * the new subroutine. Note that it should first 
+             * push the next-to-current PC first so it can 
+             * return to the current place later.
+             */
             unsigned short NNN = chip8->opcode & 0x0FFFu;
             chip8->stack[chip8->sp] = chip8->pc + 2;
             ++chip8->sp;
@@ -370,40 +393,40 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_3XNN:
-        {
-            // Skips the next instruction if VX equals NN. 
-            // (Usually the next instruction is a jump to skip
-            // a code block);
+        {   /*
+             * Skips the next instruction if VX equals NN 
+             * (Usually the next instruction is a jump to 
+             * skip a code block).
+             */
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned char NN = chip8->opcode & 0x00FFu;
             if (chip8->registers[Vx] == NN)
-            {
                 chip8->pc += 2;
-            }
             chip8->pc += 2;
             break;
         }
 
         case OP_4XNN:
-        {
-            // Skips the next instruction if VX does not equal NN.
-            // (Usually the next instruction is a jump to skip a code
-            // block);
+        {   /*
+            * Skips the next instruction if VX does not equal
+            * NN (Usually the next instruction is a jump to 
+            * skip a code block).
+             */
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned char NN = chip8->opcode & 0x00FFu;
             if (chip8->registers[Vx] != NN)
-            {
                 chip8->pc += 2;
-            }
             chip8->pc += 2;
             break;
         }
 
         case OP_5XY0:
-        {
-            // Skips the next instruction if VX equals VY.
-            // (Usually the next instruction is a jump to skip
-            // a code block);
+        {   /*
+             * Skips the next instruction if VX equals VY 
+             * (Usually the next instruction is a jump to 
+             * skip a code block).
+             */
+            
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned char Vy = (chip8->opcode & 0x00F0u) >> 4u;
             if (chip8->registers[Vx] == chip8->registers[Vy])
@@ -416,7 +439,7 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_6XNN:
         {
-            // Simply set the register Vx to the value NN.
+            /* Simply set the register Vx to the value NN. */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short NN = chip8->opcode & 0x00FFu;
             chip8->registers[Vx] = NN;
@@ -426,7 +449,7 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_7XNN:
         {
-            // Add the value NN to Vx (no flag).
+            /* Add the value NN to Vx (no flag). */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short NN = chip8->opcode & 0x00FFu;
             chip8->registers[Vx] += NN;
@@ -436,7 +459,7 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_8XY0:
         {
-            // Vx is set to the value of Vy.
+            /* Vx is set to the value of Vy. */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vy];
@@ -446,7 +469,7 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_8XY1:
         {
-            // Vx is set to Vx OR Vy.
+            /* Vx is set to Vx OR Vy. */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] |= chip8->registers[Vy];
@@ -456,7 +479,7 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_8XY2:
         {
-            // Vx is set to Vx AND Vy.
+            /* Vx is set to Vx AND Vy. */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] &= chip8->registers[Vy];
@@ -466,7 +489,7 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_8XY3:
         {
-            // Vx is set to Vx XOR Vy.
+            /* Vx is set to Vx XOR Vy. */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] ^= chip8->registers[Vy];
@@ -475,13 +498,15 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_8XY4:
-        {
-            // VX is set to the value of VX plus the value of VY.
-            // VY is not affected.
-            // Unlike 7XNN, this addition will affect the carry flag.
-            // If the result is larger than 255 (and thus overflows
-            // the 8-bit register VX), the flag register VF is set to 1.
-            // If it doesn’t overflow, VF is set to 0.
+        {   /*
+             * VX is set to the value of VX plus the value of
+             * VY. VY is not affected. Unlike 7XNN, this 
+             * addition will affect the carry flag. If the 
+             * result is larger than 255 (and thus overflows 
+             * the 8-bit register VX), the flag register VF 
+             * is set to 1. If it doesn’t overflow, VF is set
+             * to 0.
+             */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             if (chip8->registers[Vx] + chip8->registers[Vy] > 0xFF)
@@ -494,9 +519,10 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_8XY5:
-        {
-            // Sets VX to the result of VX - VY. Vf is set to 
-            // 0 if there is a borrow, 1 if there isn't.
+        {   /*
+             * Sets VX to the result of VX - VY. Vf is set to 
+             * 0 if there is a borrow, 1 if there isn't.
+             */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             if ((int)chip8->registers[Vx] - chip8->registers[Vy] < 0)
@@ -509,10 +535,12 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_8XY6:
-        {
-            // Set VX to the value of VY, shift the value of VX
-            // one bit to the right, set VF to 1 if the bit that
-            // was shifted out was 1, or 0 if it was 0.
+        {   /*
+             * Set VX to the value of VY, shift the value of 
+             * VX one bit to the right, set VF to 1 if the 
+             * bit that was shifted out was 1, or 0 if it was
+             * 0.
+             */ 
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vy];
@@ -528,7 +556,7 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_8XY7:
         {
-            // Sets VX to the result of VY - VX.
+            /* Sets VX to the result of VY - VX. */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vy] - chip8->registers[Vx];
@@ -537,10 +565,11 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_8XYE:
-        {
-            // Set VX to the value of VY, shift the value of VX
-            // one bit to the left, set VF to 1 if the bit that
-            // was shifted out was 1, or 0 if it was 0.
+        {   /*
+             * Set VX to the value of VY, shift the value of 
+             * VX one bit to the left, set VF to 1 if the bit
+             * that was shifted out was 1, or 0 if it was 0.
+             */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vy];
@@ -555,9 +584,9 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_9XY0:
-        {
-            // Skips instruction if Vx and Vy are not equal.
-            // printf_s("Initiating OP_9XY0\n");
+        {   /*
+             * Skips instruction if Vx and Vy are not equal.
+             */
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned char Vy = (chip8->opcode & 0x00F0u) >> 4u;
             if (chip8->registers[Vx] != chip8->registers[Vy])
@@ -568,8 +597,7 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_ANNN:
         {
-            // Sets the index register to the value NNN.
-            // printf_s("Initiating OP_ANNN\n");
+            /* Sets the index register to the value NNN. */
             unsigned short NNN = (chip8->opcode & 0x0FFFu);
             chip8->index = NNN;
             chip8->pc += 2;
@@ -578,18 +606,18 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_BNNN:
         {
-            // Jumps to the address NNN plus V0.
-            // printf_s("Initiating OP_BNNN\n");
+            /* Jumps to the address NNN plus V0. */
             unsigned short NNN = chip8->opcode & 0x0FFFu;
             chip8->pc = chip8->registers[0x0] + NNN;
             break;
         }
 
         case OP_CXNN:
-        {
-            // Sets VX to the result of a bitwise and operation on
-            // a random number (Typically: 0 to 255) and NN.
-            // printf_s("Initiating OP_CXNN\n");
+        {   /*
+             * Sets VX to the result of a bitwise and 
+             * operation on a random number (Typically: 0 
+             * to 255) and NN.
+             */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short NN = chip8->opcode & 0x00FFu;
             unsigned char random = rand_byte() & NN;
@@ -599,15 +627,18 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_DXYN:
-        {
-            // This is the most involved instruction. It will draw
-            // an N pixels tall sprite from the memory location that
-            // the I index register is holding to the screen, at the
-            // horizontal X coordinate in VX and the Y coordinate in VY.
-            // All the pixels that are “on” in the sprite will flip the
-            // pixels on the screen that it is drawn to. If any pixels
-            // on the screen were turned “off” by this, the VF flag
-            // register is set to 1. Otherwise, it’s set to 0.
+        {   /*
+             * This is the drawing instruction. It will draw
+             * an N pixels tall sprite from the memory 
+             * location that the I index register is holding 
+             * to the screen, at the horizontal X coordinate 
+             * in VX and the Y coordinate in VY. All the 
+             * pixels that are “on” in the sprite will flip 
+             * the pixels on the screen that it is drawn to. 
+             * If any pixels on the screen were turned “off” 
+             * by this, the VF flag register is set to 1. 
+             * Otherwise, it’s set to 0.
+             */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             unsigned char X = chip8->registers[Vx] & 0x3Fu;
@@ -637,9 +668,11 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_EX9E:
-        {
-            // Skip one instruction (increment PC by 2) if the key
-            // corresponding to the value in Vx is pressed.
+        {   /*
+             * Skip one instruction (increment PC by 2) if 
+             * the key corresponding to the value in Vx is 
+             * pressed.
+             */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             if(chip8->active_keys[chip8->registers[Vx]])
                 chip8->pc += 2;
@@ -648,9 +681,11 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_EXA1:
-        {
-            // Skip one instruction (increment PC by 2) if the key
-            // corresponding to the value in Vx is *not* pressed.
+        {   /*
+             * Skip one instruction (increment PC by 2) if 
+             * the key corresponding to the value in Vx is 
+             * *not* pressed.
+             */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             if(!chip8->active_keys[chip8->registers[Vx]])
                 chip8->pc += 2;
@@ -659,8 +694,10 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_FX07:
-        {
-            // Sets Vx to the current value of the delay timer.
+        {   /*
+             * Sets Vx to the current value of the delay 
+             * timer.
+             */
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             chip8->registers[Vx] = chip8->delay_timer;
             chip8->pc += 2;
@@ -668,11 +705,14 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_FX0A:
-        {
-            // This instruction “blocks”; it stops executing instructions
-            // and waits for key input. If a key is pressed while this 
-            // instruction is waiting for input, its hexadecimal value will
-            // be put in VX and execution continues. Timers still work at BG.
+        {   /*
+             * This instruction “blocks”; it stops executing 
+             * instructions and waits for key input. If a key
+             * is pressed while this instruction is waiting 
+             * for input, its hexadecimal value will be put 
+             * in VX and execution continues. Timers still 
+             * work at BG.
+             */
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             if (chip8->is_kbhit)
             {
@@ -690,7 +730,7 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_FX15:
         {
-            // Sets the delay timer to the value in Vx.
+            /* Sets the delay timer to the value in Vx. */
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             chip8->delay_timer = chip8->registers[Vx];
             chip8->pc += 2;
@@ -699,7 +739,7 @@ void instruction(CHIP8* chip8, int instruction)
 
         case OP_FX18:
         {
-            // Sets the sound timer to the value in Vx.
+            /* Sets the sound timer to the value in Vx. */
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             chip8->sound_timer = chip8->registers[Vx];
             chip8->pc += 2;
@@ -707,8 +747,10 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_FX1E:
-        {
-            // The index register I will get the value in VX added to it.
+        {   /*
+             * The index register I will get the value in 
+             * VX added to it.
+             */
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             chip8->index += chip8->registers[Vx];
             chip8->pc += 2;
@@ -716,9 +758,10 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_FX29:
-        {
-            // The index register I is set to the address of 
-            // the hexadecimal character in VX.
+        {   /* 
+             * The index register I is set to the address of
+             * the hexadecimal character in VX.
+             */
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
 
             // Each character is 5 sprite bytes:
@@ -729,10 +772,11 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_FX33:
-        {
-            // This instruction takes the number stored in Vx,
-            // converts it to decimal base and stores it's decimal
-            // digits in the index register.
+        {   /*
+             * This instruction takes the number stored in 
+             * Vx, converts it to decimal base and stores 
+             * it's decimal digits in the index register.
+             */
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned char value = chip8->registers[Vx];
             chip8->memory[chip8->index] = value / 100;
@@ -743,13 +787,15 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_FX55:
-        {
-            // For FX55, the value of each variable register from V0
-            // to VX inclusive (if X is 0, then only V0) will be stored
-            // in successive memory addresses, starting with the one 
-            // that’s stored in I. V0 will be stored at the address in I,
-            // V1 will be stored in I + 1, and so on, until VX is stored
-            // in I + X.
+        {   /*
+             * For FX55, the value of each variable register 
+             * from V0 to VX inclusive (if X is 0, then only 
+             * V0) will be stored in successive memory 
+             * addresses, starting with the one that’s stored
+             * in I. V0 will be stored at the address in I,
+             * V1 will be stored in I + 1, and so on, until 
+             * VX is stored in I + X.
+             */
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             for (int i = 0; i <= Vx; i++)
             {
@@ -760,14 +806,16 @@ void instruction(CHIP8* chip8, int instruction)
         }
 
         case OP_FX65:
-        {
-            // For FX65, the value of each variable register from V0
-            // to VX inclusive (if X is 0, then only V0) will be set
-            // in by values in successive memory addresses, starting 
-            // with the one that’s stored in I. V0 will be set as the
-            // the value in address in I, V1 will be set as the value
-            // in I + 1, and so on, until VX is set as the value in 
-            // I + X.
+        {   /*
+             * For FX65, the value of each variable register 
+             * from V0 to VX inclusive (if X is 0, then only 
+             * V0) will be set in by values in successive 
+             * memory addresses, starting with the one that’s
+             * stored in I. V0 will be set as the value in 
+             * address in I, V1 will be set as the value in 
+             * I + 1, and so on, until VX is set as the value
+             * in I + X.
+             */
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             for (int i = 0; i <= Vx; i++)
             {
@@ -779,8 +827,10 @@ void instruction(CHIP8* chip8, int instruction)
 
         default:
         {
-            printf_s("There seems to be an error with determining the opcode.\n");
-            exit(DET_OPCODE_ERROR);
+            printf_s("There seems to be an error with \
+                    decoding the opcode. Opcode = 0x%x\n",
+                    chip8->opcode);
+            exit(DECODE_OPCODE_ERROR);
             break;
         }
     }
