@@ -644,8 +644,8 @@ void execute(CHIP8* chip8, int opcode)
              */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
-            unsigned char X = chip8->registers[Vx] % 0x3Fu;
-            unsigned char Y = chip8->registers[Vy] & 0x1Fu;
+            unsigned char X = chip8->registers[Vx] % 64;
+            unsigned char Y = chip8->registers[Vy] % 32;
             chip8->registers[0xFu] = 0;
             unsigned char N = chip8->opcode & 0xFu;
             
