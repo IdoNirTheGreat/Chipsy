@@ -1,7 +1,7 @@
 # Chipsy - A CHIP-8 Emulator in C
 
 ## Introduction:
-
+This project is named Chipsy, and it is an emulator for the legacy programming language [CHIP-8](https://en.wikipedia.org/wiki/CHIP-8). Feel free to explore the code, but I do recommend that you read this `README.md` file prior to diving in, and if you want to try this project on your own, I really recommend that you read the 'Lessons Learned' section in this file.
 
 <br />
 
