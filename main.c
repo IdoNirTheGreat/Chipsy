@@ -10,7 +10,7 @@
 # define G_VAL 255 // Green display value
 # define B_VAL 0 // Blue display value
 # define A_VAL 255 // Alpha value
-# define FILENAME ".\\Games\\Intro_logo.ch8"
+# define DEFAULT_FILENAME ".\\Games\\Intro_logo.ch8"
 
 enum error_code
 {
@@ -19,41 +19,32 @@ enum error_code
 };
 
 unsigned int update_screen(SDL_Renderer* renderer, CHIP8* chip8)
-{
-    int color = 0;
+{   /* 
+     * Draws each pixel by using the SDL library.
+     */
     unsigned int delay = SDL_GetTicks();
 
+    // Draw "on" pixels:
+    SDL_SetRenderDrawColor(renderer, R_VAL, G_VAL, B_VAL, A_VAL);
     for (int i = 0; i < COLS; i++)
     {
         for (int j = 0; j < ROWS; j++)
         {
-            if (chip8->monitor[j][i]) // Pixel is on:
+            if (chip8->monitor[j][i])
             {
-                if (!color)
-                {
-                    SDL_SetRenderDrawColor(
-                                            renderer,
-                                            R_VAL,
-                                            G_VAL, 
-                                            B_VAL, 
-                                            A_VAL);
-                    color = 1;
-                }
                 SDL_RenderDrawPoint(renderer, i, j);
             }
+        }
+    }
 
-            else // Pixel is off:
-            {
-                if (color)
-                {
-                    SDL_SetRenderDrawColor(
-                                            renderer,
-                                            0,
-                                            0,
-                                            0, 
-                                            0);
-                    color = 0;
-                }
+    // Draw "off" pixels:
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    for (int i = 0; i < COLS; i++)
+    {
+        for (int j = 0; j < ROWS; j++)
+        {
+            if (!chip8->monitor[j][i])
+            {                
                 SDL_RenderDrawPoint(renderer, i, j);
             }
         }
@@ -64,7 +55,10 @@ unsigned int update_screen(SDL_Renderer* renderer, CHIP8* chip8)
 }
 
 void update_input(SDL_Event* event, CHIP8* chip8)
-{
+{   /*
+     * Updates each key's flag to represent if it's pressed 
+     * down, in the CHIP-8 struct.
+     */
     // Press Key Event:
     if(event->type == SDL_KEYDOWN)
     {
@@ -283,7 +277,9 @@ void update_input(SDL_Event* event, CHIP8* chip8)
 }
 
 void update_kbhit(CHIP8* chip8)
-{
+{   /*
+     * Updates the kbhit flag in the CHIP-8 struct.
+     */
     unsigned char kbhit = 0;
     for(int i = 0; i < KEYS; i++)
     {
@@ -297,7 +293,13 @@ void update_kbhit(CHIP8* chip8)
 }
 
 int main(int argc, char* argv[])
-{
+{   /*
+     * The program's main function. What it does by order is:
+     * 1. Creates SDL structs.
+     * 2. Creates the CHIP-8 struct instance.
+     * 3. Plays intro.
+     * 4. Runs selected ROM in a main loop.
+     */
     // SDL Setup:
     SDL_Window* window = SDL_CreateWindow(
                         "Chipsy - The Best CHIP-8 Emulator!",
@@ -318,7 +320,7 @@ int main(int argc, char* argv[])
     // CHIP-8 Setup:
     CHIP8 chipsy = {};
     if (argc > 1) init_chip8(&chipsy, argv[1]);
-    else init_chip8(&chipsy, FILENAME);
+    else init_chip8(&chipsy, DEFAULT_FILENAME);
 
     // Main loop:
     int running = 1;
