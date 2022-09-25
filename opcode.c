@@ -32,8 +32,10 @@ void decode(CHIP8* chip8)
                 default:
                 {
                     printf_s("There seems to be an error \
-                            with determining the opcode. \
-                            Opcode = 0x%x\n", chip8->opcode);
+                            with decoding the opcode. \
+                            Opcode = 0x%x, PC = 0x%x\n",
+                            chip8->opcode,
+                            chip8->pc);
                     exit(DECODE_OPCODE_ERROR);
                     break;
                 }
@@ -146,8 +148,10 @@ void decode(CHIP8* chip8)
                 default:
                 {
                     printf_s("There seems to be an error \
-                            with determining the opcode. \
-                            Opcode = 0x%x\n", chip8->opcode);
+                            with decoding the opcode. \
+                            Opcode = 0x%x, PC = 0x%x\n",
+                            chip8->opcode,
+                            chip8->pc);
                     exit(DECODE_OPCODE_ERROR);
                     break;
                 }
@@ -207,7 +211,9 @@ void decode(CHIP8* chip8)
                 {
                     printf_s("There seems to be an error \
                             with decoding the opcode. \
-                            Opcode = 0x%x\n", chip8->opcode);
+                            Opcode = 0x%x, PC = 0x%x\n",
+                            chip8->opcode,
+                            chip8->pc);
                     exit(DECODE_OPCODE_ERROR);
                     break;
                 }
@@ -242,8 +248,9 @@ void decode(CHIP8* chip8)
                         {
                             printf_s("There seems to be an \
                             error with decoding the \
-                            opcode. Opcode = 0x%x\n", 
-                            chip8->opcode);
+                            opcode. Opcode = 0x%x, PC = 0x%x\n", 
+                            chip8->opcode,
+                            chip8->pc);
                             exit(DECODE_OPCODE_ERROR);
                             break;
                         }
@@ -279,8 +286,9 @@ void decode(CHIP8* chip8)
                         {
                             printf_s("There seems to be an \
                             error with decoding the \
-                            opcode. Opcode = 0x%x\n",
-                            chip8->opcode);
+                            opcode. Opcode = 0x%x, PC = 0x%x\n",
+                            chip8->opcode,
+                            chip8->pc);
                             exit(DECODE_OPCODE_ERROR);
                             break;
                         }
@@ -318,7 +326,9 @@ void decode(CHIP8* chip8)
                 {
                     printf_s("There seems to be an error \
                             with decoding the opcode. \
-                            Opcode = 0x%x\n", chip8->opcode);
+                            Opcode = 0x%x, PC = 0x%x\n",
+                            chip8->opcode,
+                            chip8->pc);
                     exit(DECODE_OPCODE_ERROR);
                     break;
                 }
@@ -330,7 +340,9 @@ void decode(CHIP8* chip8)
         {
             printf_s("There seems to be an error \
                             with decoding the opcode. \
-                            Opcode = 0x%x\n", chip8->opcode);
+                            Opcode = 0x%x, PC = 0x%x\n",
+                            chip8->opcode,
+                            chip8->pc);
             exit(DECODE_OPCODE_ERROR);
             break;
         }
@@ -438,8 +450,7 @@ void execute(CHIP8* chip8, int opcode)
         }
 
         case OP_6XNN:
-        {
-            /* Simply set the register Vx to the value NN. */
+        {   /* Simply set the register Vx to the value NN. */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short NN = chip8->opcode & 0x00FFu;
             chip8->registers[Vx] = NN;
@@ -448,8 +459,7 @@ void execute(CHIP8* chip8, int opcode)
         }
 
         case OP_7XNN:
-        {
-            /* Add the value NN to Vx (no flag). */
+        {   /* Add the value NN to Vx (no flag). */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short NN = chip8->opcode & 0x00FFu;
             chip8->registers[Vx] += NN;
@@ -458,8 +468,7 @@ void execute(CHIP8* chip8, int opcode)
         }
 
         case OP_8XY0:
-        {
-            /* Vx is set to the value of Vy. */
+        {   /* Vx is set to the value of Vy. */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vy];
@@ -468,8 +477,7 @@ void execute(CHIP8* chip8, int opcode)
         }
 
         case OP_8XY1:
-        {
-            /* Vx is set to Vx OR Vy. */
+        {   /* Vx is set to Vx OR Vy. */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] |= chip8->registers[Vy];
@@ -478,8 +486,7 @@ void execute(CHIP8* chip8, int opcode)
         }
 
         case OP_8XY2:
-        {
-            /* Vx is set to Vx AND Vy. */
+        {   /* Vx is set to Vx AND Vy. */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] &= chip8->registers[Vy];
@@ -488,8 +495,7 @@ void execute(CHIP8* chip8, int opcode)
         }
 
         case OP_8XY3:
-        {
-            /* Vx is set to Vx XOR Vy. */
+        {   /* Vx is set to Vx XOR Vy. */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] ^= chip8->registers[Vy];
@@ -555,8 +561,7 @@ void execute(CHIP8* chip8, int opcode)
         }
 
         case OP_8XY7:
-        {
-            /* Sets VX to the result of VY - VX. */
+        {   /* Sets VX to the result of VY - VX. */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
             chip8->registers[Vx] = chip8->registers[Vy] - chip8->registers[Vx];
@@ -596,8 +601,7 @@ void execute(CHIP8* chip8, int opcode)
         }
 
         case OP_ANNN:
-        {
-            /* Sets the index register to the value NNN. */
+        {   /* Sets the index register to the value NNN. */
             unsigned short NNN = (chip8->opcode & 0x0FFFu);
             chip8->index = NNN;
             chip8->pc += 2;
@@ -605,8 +609,7 @@ void execute(CHIP8* chip8, int opcode)
         }
 
         case OP_BNNN:
-        {
-            /* Jumps to the address NNN plus V0. */
+        {   /* Jumps to the address NNN plus V0. */
             unsigned short NNN = chip8->opcode & 0x0FFFu;
             chip8->pc = chip8->registers[0x0] + NNN;
             break;
@@ -641,10 +644,10 @@ void execute(CHIP8* chip8, int opcode)
              */
             unsigned short Vx = (chip8->opcode & 0x0F00u) >> 8u;
             unsigned short Vy = (chip8->opcode & 0x00F0u) >> 4u;
-            unsigned char X = chip8->registers[Vx] & 0x3Fu;
+            unsigned char X = chip8->registers[Vx] % 0x3Fu;
             unsigned char Y = chip8->registers[Vy] & 0x1Fu;
             chip8->registers[0xFu] = 0;
-            unsigned char N = chip8->opcode & 0xF;
+            unsigned char N = chip8->opcode & 0xFu;
             
             for (int row = 0; row < N; row++)
             {
@@ -729,8 +732,7 @@ void execute(CHIP8* chip8, int opcode)
         }
 
         case OP_FX15:
-        {
-            /* Sets the delay timer to the value in Vx. */
+        {   /* Sets the delay timer to the value in Vx. */
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             chip8->delay_timer = chip8->registers[Vx];
             chip8->pc += 2;
@@ -738,8 +740,7 @@ void execute(CHIP8* chip8, int opcode)
         }
 
         case OP_FX18:
-        {
-            /* Sets the sound timer to the value in Vx. */
+        {   /* Sets the sound timer to the value in Vx. */
             unsigned char Vx = (chip8->opcode & 0x0F00u) >> 8u;
             chip8->sound_timer = chip8->registers[Vx];
             chip8->pc += 2;
@@ -828,8 +829,10 @@ void execute(CHIP8* chip8, int opcode)
         default:
         {
             printf_s("There seems to be an error with \
-                    decoding the opcode. Opcode = 0x%x\n",
-                    chip8->opcode);
+                    decoding the opcode. Opcode = 0x%x \
+                    PC = 0x%x\n",
+                    chip8->opcode,
+                    chip8->pc);
             exit(DECODE_OPCODE_ERROR);
             break;
         }
