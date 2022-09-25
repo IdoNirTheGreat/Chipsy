@@ -37,6 +37,9 @@ Note that you can custom change the controls by choosing different keys in the f
 ![PONG2.png](/Screenshots/PONG2.png "A Screenshot of Pong2.")
 <br />
 
+![UFO.png](/Screenshots/UFO.png "A Screenshot of UFO.")
+<br />
+
 ## Lessons Learned:
 * I dove in to the online tutorials, but it was probably better if I had tried to execute the CHIP-8 assembly code first by hand, just a simple file like the IBM logo file. This was the first time I had worked with machine code, so if you want to do a similar project to get familiar with a relatively simple assembly language like I did, you should probably start with understanding the Fetch-Decode-Execute cycle, then learn what the instructions do, and try to execute it by hand. I used [this](https://www.piskelapp.com/p/create/sprite) website to simulate the monitor and painting with sprites like the DXYN instruction does.
 
