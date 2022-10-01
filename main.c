@@ -350,7 +350,7 @@ int main(int argc, char* argv[])
     else init_chip8(&chipsy, DEFAULT_FILENAME);
 
     // Main loop:
-    printf_s("~~~ Loading Selected ROM ~~~\n");
+    printf_s("\n~~~ Loading Selected ROM ~~~\n");
     int running = 1;
     SDL_Event event;
     while(running)
