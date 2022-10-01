@@ -345,12 +345,12 @@ int main(int argc, char* argv[])
     if(chipsy.pc >= 0x2BC) SDL_Delay(INTRO_WAIT_TIME);
 
     // Play Selected File:
+    printf_s("\n~~~ Loading Selected ROM ~~~\n");
     memset(&chipsy, 0, sizeof(CHIP8)); // Reset to default values.
     if (argc > 1) init_chip8(&chipsy, argv[1]);
     else init_chip8(&chipsy, DEFAULT_FILENAME);
 
     // Main loop:
-    printf_s("\n~~~ Loading Selected ROM ~~~\n");
     int running = 1;
     SDL_Event event;
     while(running)
@@ -415,6 +415,6 @@ int main(int argc, char* argv[])
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
-    printf_s("Program exited successfully.\n");
+    printf_s("\nProgram exited successfully.\n\n");
     return EXIT_SUCCESS;
 }
