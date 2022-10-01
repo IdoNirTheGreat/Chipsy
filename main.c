@@ -6,11 +6,15 @@
 # define SCREEN_WIDTH 64 * SCALE
 # define SCREEN_HEIGHT 32 * SCALE
 # define MONITOR_REFRESH_INTERVAL 16u // 60 [Hz]
+# define INTRO_WAIT_TIME 3000
+# define CREDITS_WAIT_TIME 1500
 # define R_VAL 0 // Red display value
 # define G_VAL 255 // Green display value
 # define B_VAL 0 // Blue display value
 # define A_VAL 255 // Alpha value
-# define DEFAULT_FILENAME ".\\Games\\Intro_logo.ch8"
+# define DEFAULT_FILENAME ".\\Games\\UFO"
+# define INTRO_FILENAME ".\\Games\\Intro.ch8"
+# define CREDITS_FILENAME ".\\Games\\Credits.ch8"
 
 enum error_code
 {
@@ -317,12 +321,36 @@ int main(int argc, char* argv[])
     if(!SDL_RenderSetScale(renderer, SCALE, SCALE))
         printf_s("%s\n", SDL_GetError());
 
-    // CHIP-8 Setup:
+    // Create CHIP-8 Machine:
     CHIP8 chipsy = {};
+
+    // Play Intro:
+    printf_s("\n~~~ Loading Intro ~~~\n");
+    init_chip8(&chipsy, INTRO_FILENAME);
+    while(chipsy.pc < 0x2BC)
+    {
+        cycle(&chipsy);
+        if (chipsy.update_screen)
+        { 
+            unsigned int delay = update_screen(
+                                                renderer,
+                                                &chipsy);
+            chipsy.update_screen = 0;
+            if (MONITOR_REFRESH_INTERVAL > delay)
+            {
+                SDL_Delay(MONITOR_REFRESH_INTERVAL - delay);
+            }
+        }
+    }
+    if(chipsy.pc >= 0x2BC) SDL_Delay(INTRO_WAIT_TIME);
+
+    // Play Selected File:
+    memset(&chipsy, 0, sizeof(CHIP8)); // Reset to default values.
     if (argc > 1) init_chip8(&chipsy, argv[1]);
     else init_chip8(&chipsy, DEFAULT_FILENAME);
 
     // Main loop:
+    printf_s("~~~ Loading Selected ROM ~~~\n");
     int running = 1;
     SDL_Event event;
     while(running)
@@ -357,10 +385,31 @@ int main(int argc, char* argv[])
             chipsy.update_screen = 0;
             if (MONITOR_REFRESH_INTERVAL > delay)
             {
-                SDL_Delay(MONITOR_REFRESH_INTERVAL- delay);
-            } 
+                SDL_Delay(MONITOR_REFRESH_INTERVAL - delay);
+            }
         }
     }
+
+    // Play Credits:
+    memset(&chipsy, 0, sizeof(CHIP8)); // Reset to default values.
+    printf_s("\n~~~ Loading Credits ~~~\n");
+    init_chip8(&chipsy, CREDITS_FILENAME);
+    while(chipsy.pc < 0x23A)
+    {
+        cycle(&chipsy);
+        if (chipsy.update_screen)
+        { 
+            unsigned int delay = update_screen(
+                                                renderer,
+                                                &chipsy);
+            chipsy.update_screen = 0;
+            if (MONITOR_REFRESH_INTERVAL > delay)
+            {
+                SDL_Delay(MONITOR_REFRESH_INTERVAL - delay);
+            }
+        }
+    } 
+    if(chipsy.pc >= 0x23A) SDL_Delay(CREDITS_WAIT_TIME);
 
     // Program Termination:
     SDL_DestroyRenderer(renderer);
