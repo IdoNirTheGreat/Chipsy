@@ -8,16 +8,17 @@ This project is called Chipsy, and it is an emulator for the legacy programming 
 ## Build and Execution:
 To compile the code, first make sure that you have the GNU GCC compiler installed (if it's not installed you can use this [link](https://gcc.gnu.org/install/) or simply google how to install it), then write the following line in the terminal:
 
-`gcc fonts.c chip8.c randgen.c opcode.c main.c -o main -LSDL/lib -lmingw32 -lSDL2main -lSDL2 `
+`gcc fonts.c chip8.c randgen.c opcode.c main.c -o main -LSDL/lib -lmingw32 -lSDL2main -lSDL2`
 
-To execute the code, simply replace *GAME_FILE* with the name of the game that you want to try. Don't forget to add the directory name if you want to play the games in a folder, for example:
+To execute the code, simply replace *GAME_FILE* with the name of the game that you want to try:
 
-`.\main.exe .\Games\PONG`
+`.\main.exe GAME_FILE`
+
+Don't forget to add the directory name if you want to play the games in a folder. You can also write the two lines in one terminal command by adding a semicolon after copying the first line (compiling the files) and before copying the second line (executing the '.exe' file). For example:
+
+`gcc fonts.c chip8.c randgen.c opcode.c main.c -o main -LSDL/lib -lmingw32 -lSDL2main -lSDL2; .\main.exe .\Games\PONG`
 
 If you do not specify a file to run, then the program will run a default file, defined in `main.c`.
-<br />
-
-<span style="color:yellow"> Side note: You can also write the two lines in one terminal command by adding a semicolon after copying the first line (compiling the files) and before copying the second line (executing the '.exe' file).</span>
 
 <br />
 
